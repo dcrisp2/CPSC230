@@ -39,10 +39,10 @@ int main()
 	
 	
 	
-
-	for (int x : num ) {
+	// Could not get this to work
+	/*for (int x : num ) {
 		cout << x << "\t";
-	}
+	}*/
 	
 	return 0;
 }
