@@ -21,17 +21,21 @@ const int MAX_CHARS_PER_LINE = 100;
 const int MAX_LINES_PER_FILE = 200;
 const char* DELIMITER = " #";
 
-void get_stuff( istream& , string* , string* , int );
-char* put_stuff( ostream& , string* , string* , int );
+void get_stuff( istream& , string* , string* , string* , string* , int );
+void put_stuff( ostream& , string* , string* , string* , string* , int );
 
 int main()
 {
 	system("cls");
-	string name[MAX_LINES_PER_FILE] = {""};
-	string value[MAX_LINES_PER_FILE] = {""};
+	string name_set[MAX_LINES_PER_FILE] = {""};
+	string value_set[MAX_LINES_PER_FILE] = {""};
+	string name_read[MAX_LINES_PER_FILE] = {""};
+	string value_read[MAX_LINES_PER_FILE] = {""};
 
 	char inpfile[40] = {""};
 	char outfile[40] = {""};
+	
+	char sortOption;
 	
 	// Request Filenames From User
 	cout << "Enter filename for input relative to current location:\n";
@@ -49,7 +53,7 @@ int main()
 	cout << "\nGETTING INPUT:\n";
 	for (int i = 0; i<MAX_LINES_PER_FILE; i++) {
 		cout << i;
-		get_stuff(fin, name, value, i);
+		get_stuff(fin, name_set, value_set, name_read, value_read, i);
 		cout << "\n";
 	}
 	
@@ -63,9 +67,12 @@ int main()
 	
 	cout << "\nWRITING OUTPUT:\n";
 	for (int i = 0; i < MAX_LINES_PER_FILE; i++) {
-		put_stuff(fout, name, value, i);
+		put_stuff(fout, name_set, value_set, name_read, value_read, i);
 	}
 	fout.close();
+	
+	//cout << "\nWould you like to sort these lines by RD value?\n";
+	//cin >> sortOption;
 	
 	
 	
@@ -74,50 +81,56 @@ int main()
 }
 
 
-void get_stuff(istream& fin, string* name, string* value, int i)
+void get_stuff(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char character;
-	char* thing1 = new char[MAX_CHARS_PER_LINE];
-	char * splitThing1;
+	char* thing = new char[MAX_CHARS_PER_LINE];
+	char * splitThing;
 	int count = 0;
 	
 	// Skip lines starting with '#'
 	while (fin.peek()=='#') {
-		fin.getline(thing1,MAX_CHARS_PER_LINE);
+		fin.getline(thing,MAX_CHARS_PER_LINE);
 	}
 	
 	//getline(c-string, numchars )
-	fin.getline(thing1,MAX_CHARS_PER_LINE);
+	fin.getline(thing,MAX_CHARS_PER_LINE);
 	//strtok().. if a token is found, a pointer to the beginning of token, otherwise a null pointer. Calling with NULL instead of c-str causes function to continue scanning where a previous successful call to the function ended.
-	splitThing1 = strtok (thing1,DELIMITER);
-	while (splitThing1 != NULL) {
-		if (!count){
-			name[i] = splitThing1;
-			splitThing1 = strtok (NULL, DELIMITER);
-		} else if (count) {
-			value[i]= splitThing1;
-			splitThing1 = strtok (NULL, DELIMITER);
+	splitThing = strtok (thing,DELIMITER);
+	while (splitThing != NULL) {
+		switch(count) {
+			case 0:
+				name_set[i] = splitThing;
+				splitThing = strtok (NULL, DELIMITER);
+			case 1:
+				value_set[i]= splitThing;
+				splitThing = strtok (NULL, DELIMITER);
+			case 2:
+				name_read[i] = splitThing;
+				splitThing = strtok (NULL, DELIMITER);
+			case 3:
+				value_read[i] = splitThing;
+				splitThing = strtok (NULL, DELIMITER);
 		}
+		
 		count++;
 	}
-	//name[i] = thing1;
-	
-	//return thing1;
 }
 
-char* put_stuff(ostream& fout, string* name, string* value, int i)
+void put_stuff(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
+	char *namestr = new char[name_set[i].length() + 1];
+	char *valuestr = new char[value_set[i].length() + 1];
+	char *namestr2 = new char[name_read[i].length() + 1];
+	char *valuestr2 = new char[value_read[i].length() + 1];
 	
-	char *namestr = new char[name[i].length() + 1];
-	char *valuestr = new char[value[i].length() + 1];
-		
-	strcpy(namestr, name[i].c_str());
-	strcpy(valuestr, value[i].c_str());
+	strcpy(namestr, name_set[i].c_str());
+	strcpy(valuestr, value_set[i].c_str());
+	strcpy(namestr2, name_read[i].c_str());
+	strcpy(valuestr2, value_read[i].c_str());
 	
 	// Display output to fout and screen
 	//		can't cout type string*, had to copy into char first.
-	fout << "caput " << namestr << "\t" << valuestr << "\n";
-	cout << "caput " << namestr << "\t" << valuestr << "\n";
-	
-	return namestr;
+	fout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
+	cout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
 }
