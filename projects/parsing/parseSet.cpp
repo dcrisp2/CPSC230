@@ -18,18 +18,15 @@
 using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
-const int MAX_LINES_PER_FILE = 100;
+const int MAX_LINES_PER_FILE = 200;
 const char* DELIMITER = " #";
 
-char* get_stuff( istream& , string* , string* , int );
+void get_stuff( istream& , string* , string* , int );
 char* put_stuff( ostream& , string* , string* , int );
 
 int main()
 {
 	system("cls");
-	char* thing1 = new char[MAX_CHARS_PER_LINE];
-	char* thing2 = new char[MAX_CHARS_PER_LINE];
-	char* thing3 = new char[MAX_CHARS_PER_LINE];
 	string name[MAX_LINES_PER_FILE] = {""};
 	string value[MAX_LINES_PER_FILE] = {""};
 
@@ -77,7 +74,7 @@ int main()
 }
 
 
-char* get_stuff(istream& fin, string* name, string* value, int i)
+void get_stuff(istream& fin, string* name, string* value, int i)
 {
 	char character;
 	char* thing1 = new char[MAX_CHARS_PER_LINE];
@@ -103,9 +100,9 @@ char* get_stuff(istream& fin, string* name, string* value, int i)
 		}
 		count++;
 	}
-	name[i] = thing1;
+	//name[i] = thing1;
 	
-	return thing1;
+	//return thing1;
 }
 
 char* put_stuff(ostream& fout, string* name, string* value, int i)
@@ -119,8 +116,8 @@ char* put_stuff(ostream& fout, string* name, string* value, int i)
 	
 	// Display output to fout and screen
 	//		can't cout type string*, had to copy into char first.
-	fout << "caput " << namestr << "\ncaput " << valuestr << "\n";
-	cout << "caput " << namestr << "\ncaput " << valuestr << "\n";
+	fout << "caput " << namestr << "\t" << valuestr << "\n";
+	cout << "caput " << namestr << "\t" << valuestr << "\n";
 	
 	return namestr;
 }
