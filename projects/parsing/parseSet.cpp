@@ -12,10 +12,9 @@
 using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
-//const int MAX_TOKENS_PER_LINE = 20;
-const int MAX_LINES_PER_FILE = 200;
+const int MAX_LINES_PER_FILE = 100;
 
-const char* const DELIMITER = " ";
+const char* DELIMITER = " ";
 
 char* get_stuff( istream& , string* , int );
 char* put_stuff( ostream& , string* , string* , int );
@@ -46,7 +45,7 @@ int main()
 		return 1;
 	
 	cout << "\nGETTING INPUT:\n";
-	for (int i = 0; i<MAX_LINES_PER_FILE; i++){
+	for (int i = 0; i<MAX_LINES_PER_FILE; i++) {
 		cout << i;
 		get_stuff(fin, name, i);
 		cout << "\t\t\t";
@@ -54,14 +53,6 @@ int main()
 		cout << "\n";
 		//cout << "This is the number of retrieval iterations: " << i << "\n";
 	}
-	
-	char *namestr = new char[name[59].length() + 1];
-	strcpy(namestr, name[59].c_str());
-	
-	fin >> thing2 >> thing3;
-	cout << "This is the new name[3]: " << namestr << endl;
-	cout << "This is the new thing2: " << thing2 << endl;
-	cout << "This is the new thing3: " << thing3 << endl;
 	
 	fin.close();
 	
@@ -86,8 +77,10 @@ int main()
 
 char* get_stuff(istream& fin, string* name, int i)
 {
-	
+	char character;
 	char* thing1 = new char[MAX_CHARS_PER_LINE];
+	while(fin.peek()== ' ') //skip spaces
+		fin.get(character);
 	//getline(c-string, numchars )
 	fin.getline(thing1,MAX_CHARS_PER_LINE);
 	name[i] = thing1;
@@ -97,9 +90,9 @@ char* get_stuff(istream& fin, string* name, int i)
 	//cout << "thing1 inside get_name: " << thing1 << "\n";
 	
 	// WANT TO TEST ASSIGNMENT OF name[i], BUT CAN'T cout TYPE string*, HAVE TO COPY IT INTO CHAR FIRST. LENGTH HERE CAN BE DEFINED.
-	char *namestr = new char[name[i].length() + 1];
-	strcpy(namestr, name[i].c_str());
-	cout << namestr;
+	//char *namestr = new char[name[i].length() + 1];
+	//strcpy(namestr, name[i].c_str());
+	//cout << namestr;
 	
 	//return namestr;
 	return thing1;
@@ -115,9 +108,8 @@ char* put_stuff(ostream& fout, string* name, string* value, int i)
 	strcpy(valuestr, value[i].c_str());
 	
 	// Display output to fout and screen
-	fout << "caput " << namestr << " " << valuestr << endl;
-	cout << "caput " << namestr << " " << valuestr << endl;
-	
+	fout << "caput " << namestr << "\ncaput " << valuestr << "\n";
+	cout << "caput " << namestr << "\ncaput " << valuestr << "\n";
 	
 	return namestr;
 }
