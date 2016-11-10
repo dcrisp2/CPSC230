@@ -3,6 +3,12 @@
 //FILE:		parseSet.cpp
 /* Readin and writing data from a text file. */
 /* Works well for AllAlarmChannels.txt as input, but doens't handle saveset.txt header very well */
+/* Skip spaces. This would only work for spaces at beginning of line. strtok and delimiter below do a much better job.
+			Removed from get_stuff()
+	while(fin.peek()== ' '){ //skip spaces
+		fin.get(character);
+		cout << "\nFOUND SPACE: '" << character << "'\n";
+}*/
 #include<iostream>
 #include<fstream>
 #include<cstring>
@@ -13,11 +19,9 @@ using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
 const int MAX_LINES_PER_FILE = 100;
-const string delim = " #";
+const char* DELIMITER = " #";
 
-const char* DELIMITER = " ";
-
-char* get_stuff( istream& , string* , int );
+char* get_stuff( istream& , string* , string* , int );
 char* put_stuff( ostream& , string* , string* , int );
 
 int main()
@@ -48,9 +52,7 @@ int main()
 	cout << "\nGETTING INPUT:\n";
 	for (int i = 0; i<MAX_LINES_PER_FILE; i++) {
 		cout << i;
-		get_stuff(fin, name, i);
-		cout << "\t\t\t";
-		get_stuff(fin, value, i);
+		get_stuff(fin, name, value, i);
 		cout << "\n";
 	}
 	
@@ -75,32 +77,34 @@ int main()
 }
 
 
-char* get_stuff(istream& fin, string* name, int i)
+char* get_stuff(istream& fin, string* name, string* value, int i)
 {
 	char character;
 	char* thing1 = new char[MAX_CHARS_PER_LINE];
+	char * splitThing1;
+	int count = 0;
+	
+	// Skip lines starting with '#'
 	while (fin.peek()=='#') {
 		fin.getline(thing1,MAX_CHARS_PER_LINE);
-	}
-	while(fin.peek()== ' '){ //skip spaces
-		fin.get(character);
-		cout << "\nFOUND SPACE: '" << character << "'\n";
 	}
 	
 	//getline(c-string, numchars )
 	fin.getline(thing1,MAX_CHARS_PER_LINE);
+	//strtok().. if a token is found, a pointer to the beginning of token, otherwise a null pointer. Calling with NULL instead of c-str causes function to continue scanning where a previous successful call to the function ended.
+	splitThing1 = strtok (thing1,DELIMITER);
+	while (splitThing1 != NULL) {
+		if (!count){
+			name[i] = splitThing1;
+			splitThing1 = strtok (NULL, DELIMITER);
+		} else if (count) {
+			value[i]= splitThing1;
+			splitThing1 = strtok (NULL, DELIMITER);
+		}
+		count++;
+	}
 	name[i] = thing1;
 	
-	// USING cout TO PRINT OUT VAR thing1
-	//cout << thing1;
-	//cout << "thing1 inside get_name: " << thing1 << "\n";
-	
-	// WANT TO TEST ASSIGNMENT OF name[i], BUT CAN'T cout TYPE string*, HAVE TO COPY IT INTO CHAR FIRST. LENGTH HERE CAN BE DEFINED.
-	//char *namestr = new char[name[i].length() + 1];
-	//strcpy(namestr, name[i].c_str());
-	//cout << namestr;
-	
-	//return namestr;
 	return thing1;
 }
 
@@ -114,6 +118,7 @@ char* put_stuff(ostream& fout, string* name, string* value, int i)
 	strcpy(valuestr, value[i].c_str());
 	
 	// Display output to fout and screen
+	//		can't cout type string*, had to copy into char first.
 	fout << "caput " << namestr << "\ncaput " << valuestr << "\n";
 	cout << "caput " << namestr << "\ncaput " << valuestr << "\n";
 	
