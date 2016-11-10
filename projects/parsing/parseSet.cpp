@@ -13,6 +13,7 @@ using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
 const int MAX_LINES_PER_FILE = 100;
+const string delim = " #";
 
 const char* DELIMITER = " ";
 
@@ -51,7 +52,6 @@ int main()
 		cout << "\t\t\t";
 		get_stuff(fin, value, i);
 		cout << "\n";
-		//cout << "This is the number of retrieval iterations: " << i << "\n";
 	}
 	
 	fin.close();
@@ -79,8 +79,14 @@ char* get_stuff(istream& fin, string* name, int i)
 {
 	char character;
 	char* thing1 = new char[MAX_CHARS_PER_LINE];
-	while(fin.peek()== ' ') //skip spaces
+	while (fin.peek()=='#') {
+		fin.getline(thing1,MAX_CHARS_PER_LINE);
+	}
+	while(fin.peek()== ' '){ //skip spaces
 		fin.get(character);
+		cout << "\nFOUND SPACE: '" << character << "'\n";
+	}
+	
 	//getline(c-string, numchars )
 	fin.getline(thing1,MAX_CHARS_PER_LINE);
 	name[i] = thing1;
