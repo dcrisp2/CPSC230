@@ -1,0 +1,24 @@
+//AUTHOR:	DAN CRISP
+//DATE:		Thursday, November 10th
+//DESC:		TEST 3
+
+TRUE & FALSE:
+1.	FALSE
+2.	TRUE
+3.	FALSE
+4.	TRUE
+5.	TRUE
+
+SHORT ANSWER:
+1.	int array[10][20];
+2.	9 indexed variables
+3.	void funct1(float array[], int Num_Elements);
+4.	Ignored
+5.	Illegal
+
+MULTIPLE CHOICE:
+1.	(c)	Array indexes must be less than the size of the array
+2.	(e)	B and D
+3.	(f)	A and B
+4.	(c)	for(i=0;i<SIZE;i++) array1[i]=array2[i];
+5.	(d)	for(i=0;i<SIZE;i++) cin >> array[i];
