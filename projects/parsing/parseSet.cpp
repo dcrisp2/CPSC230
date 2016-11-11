@@ -23,6 +23,9 @@ const char* DELIMITER = " #";
 
 void get_stuff( istream& , string* , string* , string* , string* , int );
 void put_stuff( ostream& , string* , string* , string* , string* , int );
+void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
+void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
+char request_filename(string);
 
 int main()
 {
@@ -36,15 +39,18 @@ int main()
 	char outfile[40] = {""};
 	
 	char sortOption;
+	int index[MAX_LINES_PER_FILE];
+	fill_index(index);
 	
 	// Request Filenames From User
 	cout << "Enter filename for input relative to current location:\n";
 	cin >> inpfile;
+	inpfile = request_filename("Enter input filename:\n");
 	cout << "Now enter filename for output:\n";
 	cin >> outfile;
+	outfile = request_filename("Enter output filename:\n");
 	
 	
-	//fin.open("AllAlarmChannels.txt");
 	ifstream fin;
 	fin.open(inpfile);
 	if (!fin.good())
@@ -71,10 +77,15 @@ int main()
 	}
 	fout.close();
 	
-	//cout << "\nWould you like to sort these lines by RD value?\n";
-	//cin >> sortOption;
 	
-	
+	cout << "Enter filename for input relative to current location:\n";
+	cin >> inpfile;
+	cout << "Now enter filename for output:\n";
+	cin >> outfile;
+	/*
+	cout << "\n\nSORTING INPUT:\n\n";
+	bubblesort(value_set[], index[], MAX_LINES_PER_FILE);
+	*/
 	
 	
 	return 0;
@@ -133,4 +144,43 @@ void put_stuff(ostream& fout, string* name_set, string* value_set, string* name_
 	//		can't cout type string*, had to copy into char first.
 	fout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
 	cout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
+}
+
+void fill_index( int index[])
+{
+	for (int i=0; i<MAX_LINES_PER_FILE; ++i) {	
+		index[i] += 1;
+	}
+}
+
+
+	// Request Filenames From User
+	cout << "Enter filename for input relative to current location:\n";
+	cin >> inpfile;
+
+void bubblesort(string val[], int index[], int MAX_LINES_PER_FILE)
+{
+	// Bubble largest number toward the right
+	//		Note, both val array and an index reference array are sorted using val.
+	//		This is meant to allow the reference of index to sort all other arrays filled with input.
+	//		An array could probably be used instead of val so that the data stays unchanged..
+	for (int i=MAX_LINES_PER_FILE-1; i>0; i--) {
+		for (int j = 0; j < i; j++) {
+			// pointing to value string as c_str
+			char *valstr = new char[val[i].length() + 1];
+			char *valstr2 = new char[val[j+1].length() + 1];
+			strcpy(valstr, val[j].c_str());
+			strcpy(valstr2, val[j+1].c_str());
+			
+			if(valstr > valstr2) {
+				// Swap the numbers
+				string tempString = val[j+1];
+				int tempIndex = index[j+1];
+				val[j+1] = val[j];
+				index[j+1] = index[j];
+				val[j] = tempString;
+				index[j] = tempIndex;
+			}
+		}
+	}
 }
