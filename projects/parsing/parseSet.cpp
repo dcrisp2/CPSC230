@@ -25,7 +25,7 @@ void get_stuff( istream& , string* , string* , string* , string* , int );
 void put_stuff( ostream& , string* , string* , string* , string* , int );
 void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
 void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
-char request_filename(string);
+char *request_filename(string);
 
 int main()
 {
@@ -35,20 +35,16 @@ int main()
 	string name_read[MAX_LINES_PER_FILE] = {""};
 	string value_read[MAX_LINES_PER_FILE] = {""};
 
-	char inpfile[40] = {""};
-	char outfile[40] = {""};
+	//char inpfile[40] = {""};
+	//char outfile[40] = {""};
 	
 	char sortOption;
 	int index[MAX_LINES_PER_FILE];
 	fill_index(index);
 	
 	// Request Filenames From User
-	cout << "Enter filename for input relative to current location:\n";
-	cin >> inpfile;
-	inpfile = request_filename("Enter input filename:\n");
-	cout << "Now enter filename for output:\n";
-	cin >> outfile;
-	outfile = request_filename("Enter output filename:\n");
+	char *inpfile = request_filename("Enter input filename:\n");
+	char *outfile = request_filename("Enter output filename:\n");
 	
 	
 	ifstream fin;
@@ -78,10 +74,17 @@ int main()
 	fout.close();
 	
 	
-	cout << "Enter filename for input relative to current location:\n";
-	cin >> inpfile;
-	cout << "Now enter filename for output:\n";
-	cin >> outfile;
+	
+	// Request Filenames From User
+	inpfile = request_filename("Enter Array to sort:\n");
+	outfile = request_filename("Enter Filename for sorting output:\n");
+	switch(inpfile) {
+			case "value_set":
+				bubblesort(value_set, index, MAX_LINES_PER_FILE);
+			case "value_read":
+				bubblesort(value_read, index, MAX_LINES_PER_FILE);
+	}
+	
 	/*
 	cout << "\n\nSORTING INPUT:\n\n";
 	bubblesort(value_set[], index[], MAX_LINES_PER_FILE);
@@ -128,6 +131,7 @@ void get_stuff(istream& fin, string* name_set, string* value_set, string* name_r
 	}
 }
 
+
 void put_stuff(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char *namestr = new char[name_set[i].length() + 1];
@@ -153,10 +157,16 @@ void fill_index( int index[])
 	}
 }
 
-
+char *request_filename(string prompt)
+{
 	// Request Filenames From User
-	cout << "Enter filename for input relative to current location:\n";
-	cin >> inpfile;
+	char * filename = (char*) malloc (41);
+	char * cstr = new char[prompt.length()+1];
+	strcpy(cstr,prompt.c_str());
+	cout << cstr << "\n";
+	cin >> filename;// Had to use memory allocation in dynamic array to return actual value
+	return filename;
+}
 
 void bubblesort(string val[], int index[], int MAX_LINES_PER_FILE)
 {
