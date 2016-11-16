@@ -25,9 +25,6 @@ int main ()
 	char inpfile[40] = {""};
 	char outfile[40] = {""};
 	
-	// Was for testing only
-	// int arr1[MAX_CHARS_PER_LINE] = {10,1,9,2,8,3,7,4,5,6};
-	
 
 	cout << "Enter filename for input:\n";
 	cin >> inpfile;
