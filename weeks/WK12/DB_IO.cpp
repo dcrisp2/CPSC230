@@ -12,8 +12,10 @@
 using namespace std;
 const int NUMBER_OF_STUDENTS = 5, NUMBER_OF_GRADE_VALUES = 4;
 const int FILE_IO_MODE = 1;
+
 char *request_filename(string);
 void makefiles();
+void display_header();
 
 
 int main() {
@@ -32,16 +34,10 @@ int main() {
 		if (!haveFile) {	makefiles();	}
 		char *inpfile = request_filename("Enter input filename:\n");
 		char *outfile = request_filename("Enter output filename:\n");
-	} else {
-		// Seed random value using time
-		srand(time(NULL));		
 	}
 	
-	// Display Desc and Table Header
-	cout << "\nAUTHORS:\tManmeet Singh & Dan Crisp\n"
-		<< "DATE:\t\tThursday, November 10th\n"
-		<< "DESC:\t\tEXAM 3\n\n";
-	cout << "\nNAMES\t#1\t#2\t#3\t#4\tSUM\tAVG\n\n";
+	// Display Desc and Table Header in console
+	display_header();
 	
 	for (int i=0;i<NUMBER_OF_STUDENTS;++i) {
 		// cout does not print out type string, though it does output c_str (w/ '/0' char ending).
@@ -53,6 +49,9 @@ int main() {
 		cout << strcopied << "\t";
 		
 		if (!FILE_IO_MODE) {
+			//Seed random value using time
+			srand(time(NULL));
+			
 			// Fill 2-dim array with random numbers.
 			for (int j=0;j<NUMBER_OF_GRADE_VALUES;++j) {
 				scores[i][j] = rand() % (95-70) + 70;
@@ -93,6 +92,13 @@ void makefiles()
 {
 	char *outfile = request_filename("Enter output filename:\n");
 	
+	cout << "\nWithin what range do you want your scored generated?\nEnter MAX: ";
+	cin >> double max;
+	cout << "\nEnter MIN: ";
+	cin >> double min;
+	
+	system("cls");
+	
 	ofstream fout;
 	fout.open(outfile);
 	if (!fout.good())
@@ -104,4 +110,12 @@ void makefiles()
 	}
 	
 	fout.close();
+}
+
+void display_header() {
+	// Display Desc and Table Header in console
+	cout << "\nAUTHORS:\tManmeet Singh & Dan Crisp\n"
+		<< "DATE:\t\tThursday, November 10th\n"
+		<< "DESC:\t\tEXAM 3\n\n";
+	cout << "\nNAMES\t#1\t#2\t#3\t#4\tSUM\tAVG\n\n";
 }
