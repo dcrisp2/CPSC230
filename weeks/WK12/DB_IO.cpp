@@ -39,6 +39,8 @@ int main() {
 	// Display Desc and Table Header in console
 	display_header();
 	
+	
+	
 	for (int i=0;i<NUMBER_OF_STUDENTS;++i) {
 		// cout does not print out type string, though it does output c_str (w/ '/0' char ending).
 		// creating char pointer strcopied, pointing to new char variable with length +1 of string for needed '/0' c_str ending. 
@@ -58,6 +60,22 @@ int main() {
 				sum[i] += scores[i][j];
 				cout << scores[i][j] << "\t";
 			}
+		} else {
+			// Open inpfile
+			ifstream fin;
+			fin.open(inpfile);
+			if (!fin.good())
+				return 1;
+			
+			cout << "\nGETTING INPUT:\n";
+			int i=0;
+			while(fin >> next) {
+				scores[i][j] = atoi(next);
+				sum[i] += scores[i][j];
+				cout << scores[i][j] << "\t";
+				i++;
+			}
+			fin.close();
 		}
 		
 		avg[i] = sum[i]/NUMBER_OF_GRADE_VALUES;
@@ -91,11 +109,12 @@ char *request_filename(string prompt)
 void makefiles()
 {
 	char *outfile = request_filename("Enter output filename:\n");
+	int max, min;
 	
 	cout << "\nWithin what range do you want your scored generated?\nEnter MAX: ";
-	cin >> double max;
+	cin >> max;
 	cout << "\nEnter MIN: ";
-	cin >> double min;
+	cin >> min;
 	
 	system("cls");
 	
@@ -106,7 +125,7 @@ void makefiles()
 		//return 1; //void cannot return value
 	
 	for (int j=0;j<NUMBER_OF_GRADE_VALUES;++j) {
-		fout << rand() % (95-70) + 70 << "\n";
+		fout << rand() % (max-min) + min << "\n";
 	}
 	
 	fout.close();
