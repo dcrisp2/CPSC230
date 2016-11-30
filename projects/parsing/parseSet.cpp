@@ -78,7 +78,7 @@ int main()
 	// Request Filenames From User
 	inpfile = request_filename("Enter Array to sort:\n");
 	outfile = request_filename("Enter Filename for sorting output:\n");
-	switch(inpfile) {
+	switch(inpfile.c_str()) {
 			case "value_set":
 				bubblesort(value_set, index, MAX_LINES_PER_FILE);
 			case "value_read":
