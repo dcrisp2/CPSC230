@@ -26,6 +26,7 @@ void put_stuff( ostream& , string* , string* , string* , string* , int );
 void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
 void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
 char *request_filename(string);
+//char request_filename(string);
 
 int main()
 {
@@ -36,16 +37,19 @@ int main()
 	string value_read[MAX_LINES_PER_FILE] = {""};
 
 	//char inpfile[40] = {""};
+	char inpfile[40] = {""};
 	//char outfile[40] = {""};
+	char outfile[40] = {""};
 	
 	char sortOption;
 	int index[MAX_LINES_PER_FILE];
 	fill_index(index);
 	
 	// Request Filenames From User
-	char *inpfile = request_filename("Enter input filename:\n");
-	char *outfile = request_filename("Enter output filename:\n");
-	
+	//char *inpfile = request_filename("Enter input filename:\n"); //Worked, but wanted to use non-pointed char array
+	//inpfile = request_filename("Enter input filename:\n"); //Cannot assign to char[40]
+	strcpy(inpfile,request_filename("Enter input filename:\n"));
+	strcpy(outfile,request_filename("Enter output filename:\n"));
 	
 	ifstream fin;
 	fin.open(inpfile);
@@ -75,15 +79,22 @@ int main()
 	
 	
 	
-	// Request Filenames From User
-	inpfile = request_filename("Enter Array to sort:\n");
-	outfile = request_filename("Enter Filename for sorting output:\n");
-	switch(inpfile.c_str()) {
+	// Ask user to define what to sort, and where to put the sorted array
+	//inpfile = request_filename("Enter Array to sort:\n");
+	strcpy(inpfile,request_filename("Enter translation file for sorting:\n"));
+	strcpy(outfile,request_filename("Enter Filename for sorting output:\n"));
+	
+	//
+	
+	/*Can't switch 'char *'
+	switch(inpfile) {
 			case "value_set":
 				bubblesort(value_set, index, MAX_LINES_PER_FILE);
 			case "value_read":
 				bubblesort(value_read, index, MAX_LINES_PER_FILE);
-	}
+	}*/
+	//if (inpfile==)
+	
 	
 	/*
 	cout << "\n\nSORTING INPUT:\n\n";
@@ -109,7 +120,9 @@ void get_stuff(istream& fin, string* name_set, string* value_set, string* name_r
 	
 	//getline(c-string, numchars )
 	fin.getline(thing,MAX_CHARS_PER_LINE);
-	//strtok().. if a token is found, a pointer to the beginning of token, otherwise a null pointer. Calling with NULL instead of c-str causes function to continue scanning where a previous successful call to the function ended.
+	//strtok().. if a token is found, a pointer to the beginning of token, otherwise a null pointer.
+	//	Calling with NULL instead of c-str causes function to continue scanning where a previous 
+	//	successful call to the function ended.
 	splitThing = strtok (thing,DELIMITER);
 	while (splitThing != NULL) {
 		switch(count) {
@@ -158,6 +171,7 @@ void fill_index( int index[])
 }
 
 char *request_filename(string prompt)
+//char request_filename(string prompt)
 {
 	// Request Filenames From User
 	char * filename = (char*) malloc (41);
