@@ -14,29 +14,34 @@ class vehicle
 {
 		int mpg, capacity;
 	public:
-		void set_values (int, int);
+		//void set_values (int, int);
+		vehicle(int x,int y){
+			mpg = x;
+			capacity = y;
+		}
+		
 		int num_passengers;
 		int range() {return mpg*capacity;}
 };
 
-void vehicle::set_values (int x, int y) {
+/*void vehicle::set_values (int x, int y) {
 	mpg = x;
 	capacity = y;
-}
+}*/
 
 
 int main()
 {
 	int range1, range2;
 	
-	vehicle minivan;
-	vehicle sportcar;
+	vehicle minivan(28,15);
+	vehicle sportcar(25,15);
 	
 	minivan.num_passengers = 8;
-	minivan.set_values(28,15); //mpg and capacity
+	//minivan.set_values(28,15); //brought into constructor
 	
 	sportcar.num_passengers = 2;
-	sportcar.set_values(25,11);
+	//sportcar.set_values(25,11);
 	
 	range1 = minivan.range();
 	range2 = sportcar.range();
