@@ -185,4 +185,26 @@ RESOURCE FOR EQUIVALENT COURSE:
 https://msu.edu/~bowmanm/230
 
 	
+FINAL: (Maybe Dec 19th?)
+Written & Calendar Program
+Print code in size 14
+
+*Test 4, Chapter 9, Dec 1
+*Test 5, Chapter 10, Dec 6
+
+LABS:
+MyProgrammingLab Chapter 9 due Thursday, Dec 1st
+DEC 8, 2 programming projects due.
+	1)	SORTING
+	file w/ 100 data items (int, double, or string)
+	read file into an array
+	sort array into a second array
+	store the sorted array into a new file
+
+	2)	XML PARSER
+	*programming project 13, chapter 8, pages 503 and 504
 	
+PRESENTATION/PROJECT:
+https://1drv.ms/x/s!AvwmI_vgwzj7xR453kfkfJtRKOBx
+
+
