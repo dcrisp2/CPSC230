@@ -1,0 +1,25 @@
+//AUTHOR:		DANIEL CRISP
+//DESC:			parseSet NOTES
+
+
+
+
+	//char *inpfile = request_filename("Enter input filename:\n"); //Worked, but wanted to use non-pointed char array
+	//inpfile = request_filename("Enter input filename:\n"); //Cannot assign to char[40]
+
+//inpfile = request_filename("Enter Array to sort:\n"); assignment to char [40] allowed with strcpy...
+
+/*Can't switch 'char *'
+switch(inpfile) {
+		case "value_set":
+			bubblesort(value_set, index, MAX_LINES_PER_FILE);
+		case "value_read":
+			bubblesort(value_read, index, MAX_LINES_PER_FILE);
+}*/
+//if (inpfile==)
+	
+	
+/* USE BUBBlE SORT AFTER PARSING D#### FROM TRANSLATED CHAR ARRAY
+cout << "\n\nSORTING INPUT:\n\n";
+bubblesort(value_set[], index[], MAX_LINES_PER_FILE);
+*/

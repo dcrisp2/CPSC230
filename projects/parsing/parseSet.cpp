@@ -48,8 +48,8 @@ int main()
 	// Request Filenames From User
 	//char *inpfile = request_filename("Enter input filename:\n"); //Worked, but wanted to use non-pointed char array
 	//inpfile = request_filename("Enter input filename:\n"); //Cannot assign to char[40]
-	strcpy(inpfile,request_filename("Enter input filename:\n"));
-	strcpy(outfile,request_filename("Enter output filename:\n"));
+	strcpy(inpfile,request_filename("Enter saveset filename:\n"));
+	strcpy(outfile,request_filename("Enter output filename for verifying resulting array values:\n"));
 	
 	ifstream fin;
 	fin.open(inpfile);
@@ -62,7 +62,6 @@ int main()
 		get_stuff(fin, name_set, value_set, name_read, value_read, i);
 		cout << "\n";
 	}
-	
 	fin.close();
 	
 	
@@ -78,34 +77,25 @@ int main()
 	fout.close();
 	
 	
-	
-	// Ask user to define what to sort, and where to put the sorted array
-	//inpfile = request_filename("Enter Array to sort:\n");
-	strcpy(inpfile,request_filename("Enter translation file for sorting:\n"));
-	strcpy(outfile,request_filename("Enter Filename for sorting output:\n"));
-	
-	//
-	
-	/*Can't switch 'char *'
-	switch(inpfile) {
-			case "value_set":
-				bubblesort(value_set, index, MAX_LINES_PER_FILE);
-			case "value_read":
-				bubblesort(value_read, index, MAX_LINES_PER_FILE);
-	}*/
-	//if (inpfile==)
-	
-	
-	/*
-	cout << "\n\nSORTING INPUT:\n\n";
-	bubblesort(value_set[], index[], MAX_LINES_PER_FILE);
+	/* Having acquired values from saveset and printing them out for verification...
+		Create arrays from aliasmap.
+			This filename can be considered static.
+			But it's length and values may change as necessary.
 	*/
+	// Ask user to enter filename for printing values retrieved from saveset
+	strcpy(outfile,request_filename("Enter output filename for translated saveset:\n"));
+	
+	strcpy(outfile,request_filename("Enter :\n"));
+	
+
 	
 	
 	return 0;
 }
 
-
+/*------------------------------------------------------------------------------
+Function definitions below...
+--------------------------------------------------------------------------------*/
 void get_stuff(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char character;
