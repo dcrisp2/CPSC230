@@ -1,7 +1,11 @@
 //AUTHOR:		DANIEL CRISP
 //DESC:			parseSet NOTES
 
-
+/*
+Whats left to do....
+Create aliasmap array.
+Put values to 
+*/
 
 
 	//char *inpfile = request_filename("Enter input filename:\n"); //Worked, but wanted to use non-pointed char array
