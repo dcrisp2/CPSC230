@@ -18,11 +18,17 @@
 using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
-const int MAX_LINES_PER_FILE = 200;
-const char* DELIMITER = " #";
+const int MAX_LINES_PER_FILE = 500;
+const int MAX_LINES_IN_MAPFILE = 3500;
+const char* ROCS_DELIMITER = " ,#"; //added comma
+const char* MAP_DELIMITER = " ,";
+const char* NAME_DELIMITER = "_:";
+typedef string* StrArrayPtr;
 
-void get_stuff( istream& , string* , string* , string* , string* , int );
-void put_stuff( ostream& , string* , string* , string* , string* , int );
+void get_data( istream& , string* , string* , string* , string* , int );
+void get_data( istream& , string* , string* , int );
+void put_data( ostream& , string* , string* , string* , string* , int );
+void put_data( ostream& , string* , string* , int );
 void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
 void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
 char *request_filename(string);
@@ -31,72 +37,166 @@ char *request_filename(string);
 int main()
 {
 	system("cls");
+	
 	string name_set[MAX_LINES_PER_FILE] = {""};
 	string value_set[MAX_LINES_PER_FILE] = {""};
 	string name_read[MAX_LINES_PER_FILE] = {""};
 	string value_read[MAX_LINES_PER_FILE] = {""};
+	string name_old[MAX_LINES_IN_MAPFILE] = {""};
+	string name_new[MAX_LINES_IN_MAPFILE] = {""};
 
-	//char inpfile[40] = {""};
 	char inpfile[40] = {""};
-	//char outfile[40] = {""};
 	char outfile[40] = {""};
-	
-	char sortOption;
+	char mapfile[40] = {"aliasmap.csv"};
+	char reprintData[40] = {"reprintData"};
+	char reprintMap[40] = {"reprintMap"};
+	int num[] = {0, 0};
+	int done[] = {0, 0};
+
+	//char sortOption;
 	int index[MAX_LINES_PER_FILE];
 	fill_index(index);
 	
-	// Request Filenames From User
-	//char *inpfile = request_filename("Enter input filename:\n"); //Worked, but wanted to use non-pointed char array
-	//inpfile = request_filename("Enter input filename:\n"); //Cannot assign to char[40]
+	// Request Saveset Filename From User
 	strcpy(inpfile,request_filename("Enter saveset filename:\n"));
-	strcpy(outfile,request_filename("Enter output filename for verifying resulting array values:\n"));
 	
+	/*-----GET SAVESET DATA-----*/
 	ifstream fin;
 	fin.open(inpfile);
 	if (!fin.good())
 		return 1;
 	
-	cout << "\nGETTING INPUT:\n";
-	for (int i = 0; i<MAX_LINES_PER_FILE; i++) {
-		cout << i;
-		get_stuff(fin, name_set, value_set, name_read, value_read, i);
-		cout << "\n";
+	cout << "\nGETTING INPUT...\n";
+	int i = 0;
+	while (!fin.eof()) {
+		get_data(fin, name_set, value_set, name_read, value_read, i);
+		i++;
 	}
+	num[0] = i-1; //for input arrays
+	cout << "\tExiting save file. Non-null data of length " << num[0] << "\n";
 	fin.close();
 	
 	
+	/*-----PRINT SAVESET DATA-----*/
 	ofstream fout;
-	fout.open(outfile);
+	fout.open(reprintData);
 	if(!fout.good())
 		return 1;
 	
-	cout << "\nWRITING OUTPUT:\n";
-	for (int i = 0; i < MAX_LINES_PER_FILE; i++) {
-		put_stuff(fout, name_set, value_set, name_read, value_read, i);
+	cout << "\nPRINTING SAVESET DATA TO 'reprintData'...\n";
+	for (int i = 0; i < num[0]; i++) {
+		put_data(fout, name_set, value_set, name_read, value_read, i);
 	}
 	fout.close();
 	
 	
-	/* Having acquired values from saveset and printing them out for verification...
-		Create arrays from aliasmap.
-			This filename can be considered static.
-			But it's length and values may change as necessary.
+	/*-----GET ALIASMAP DATA-----*/
+	ifstream finMap; //map file
+	finMap.open(mapfile);
+	if (!finMap.good())
+		return 1;
+	
+	cout << "\nGETTING ALIASMAP...\n";
+	i = 0;
+	while (!finMap.eof()) {
+			get_data(finMap, name_old, name_new, i);
+			
+			
+			i++;
+	}
+	num[1] = i-1; //re-used for aliasmap data
+	cout << "\tExiting aliasmap.csv. Non-null data of length " << num[1] << "\n";
+	finMap.close();
+	
+	
+	/*-----PRINT ALIASMAP DATA-----*/
+	ofstream foutMap;
+	foutMap.open(reprintMap);
+	if(!foutMap.good())
+		return 1;
+	
+	cout << "\nPRINTING ALIASMAP TO 'reprintMap'...\n";
+	for (int i = 0; i < num[1]; i++) {
+		put_data(foutMap, name_old, name_new, i);
+	}
+	foutMap.close();
+	
+	
+	
+	
+	/*-----TRANSLATE SAVESET DATA-----*/
+	for (int j = 0; j < num[0]; ++j) {
+		char *setStr = new char[name_set[j].length() + 1];
+		char *readStr = new char[name_read[j].length() + 1];
+		strcpy(setStr, name_set[j].c_str());
+		strcpy(readStr, name_read[j].c_str());
+		cout << "\nj: " << j << "\tGets us " << setStr << "...";
+		
+		for (int i = 0; i < num[1]; ++i) {
+			char *oldStr = new char[name_old[i].length() + 1];
+			char *newStr = new char[name_new[i].length() + 1];
+			strcpy(oldStr, name_old[i].c_str());
+			strcpy(newStr, name_new[i].c_str());
+			
+			if (name_set[j].compare(name_old[i])==0&&done[0]==0) {
+				cout << "\nNow " << setStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
+				name_set[j].replace(0,name_old[i].length(),name_new[i]);
+				cout << newStr << "!!\n";
+				done[0]=1;
+			} else if (name_read[j].compare(name_old[i])==0 && done[1]==0) {
+				cout << "\nNow " << readStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
+				name_read[j].replace(0,name_old[i].length(),name_new[i]);
+				cout << newStr << "!!\n";
+				done[1]=1;
+			} else if (done[0]+done[1]==1) {
+				i = num[1];
+			}
+			delete [] oldStr;
+			delete [] newStr;
+		}
+		delete [] setStr;
+	}
+	
+	
+	/*-----PROBING FUNNY BUSINESS WITH TRANSLATION STARTING IN BTS30-----*/
+	/*
+	char setStr = {"REA_BTS23:PSD_D1155:I_CSET"};
+	for (int j = 0; j < num[0]; ++j) {
+		if (setStr.compare(name_set[j])==0) {
+			cout << "Found it at j equals " << j << endl;
+		}
+	}
+	
+	cout << "\nj: " << 0 << "\tGets us " << setStr << "...";
+		
+	for (int i = 0; i < num[1]; ++i) {
+		char *oldStr = new char[name_old[i].length() + 1];
+		char *newStr = new char[name_new[i].length() + 1];
+		strcpy(oldStr, name_old[i].c_str());
+		strcpy(newStr, name_new[i].c_str());
+			
+		if (setStr.compare(name_old[i])==0) {
+			cout << "\nNow " << setStr << " is equal to " << oldStr << " when (i,j) equal " << i << ".\nSo its translation is:\t";
+			//name_set[j].replace(0,name_new[i].length(),name_new[i]);
+			cout << newStr << "!!\n";
+			i = num[1];
+		}
+		delete [] oldStr;
+		delete [] newStr;
+	}
 	*/
-	// Ask user to enter filename for printing values retrieved from saveset
-	strcpy(outfile,request_filename("Enter output filename for translated saveset:\n"));
-	
-	strcpy(outfile,request_filename("Enter :\n"));
-	
-
 	
 	
 	return 0;
 }
 
+
+
+
 /*------------------------------------------------------------------------------
 Function definitions below...
 --------------------------------------------------------------------------------*/
-void get_stuff(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
+void get_data(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char character;
 	char* thing = new char[MAX_CHARS_PER_LINE];
@@ -113,29 +213,58 @@ void get_stuff(istream& fin, string* name_set, string* value_set, string* name_r
 	//strtok().. if a token is found, a pointer to the beginning of token, otherwise a null pointer.
 	//	Calling with NULL instead of c-str causes function to continue scanning where a previous 
 	//	successful call to the function ended.
-	splitThing = strtok (thing,DELIMITER);
+	splitThing = strtok (thing,ROCS_DELIMITER);
 	while (splitThing != NULL) {
 		switch(count) {
 			case 0:
 				name_set[i] = splitThing;
-				splitThing = strtok (NULL, DELIMITER);
+				splitThing = strtok (NULL, ROCS_DELIMITER);
 			case 1:
 				value_set[i]= splitThing;
-				splitThing = strtok (NULL, DELIMITER);
+				splitThing = strtok (NULL, ROCS_DELIMITER);
 			case 2:
 				name_read[i] = splitThing;
-				splitThing = strtok (NULL, DELIMITER);
+				splitThing = strtok (NULL, ROCS_DELIMITER);
 			case 3:
 				value_read[i] = splitThing;
-				splitThing = strtok (NULL, DELIMITER);
+				splitThing = strtok (NULL, ROCS_DELIMITER);
 		}
-		
 		count++;
 	}
+	delete [] thing;
+}
+
+void get_data(istream& fin, string* name_old, string* name_new, int i)
+{
+	//See first definition of get_stuff for notes
+	char character;
+	char* thing = new char[MAX_CHARS_PER_LINE];
+	char * splitThing;
+	int count = 0;
+	
+	while (fin.peek()=='#') {
+		fin.getline(thing,MAX_CHARS_PER_LINE);
+	}
+	
+	fin.getline(thing,MAX_CHARS_PER_LINE);
+	
+	splitThing = strtok (thing,MAP_DELIMITER);
+	while (splitThing != NULL) {
+		switch(count) {
+			case 0:
+				name_old[i] = splitThing;
+				splitThing = strtok (NULL, MAP_DELIMITER);
+			case 1:
+				name_new[i]= splitThing;
+				splitThing = strtok (NULL, MAP_DELIMITER);
+		}
+		count++;
+	}
+	delete [] thing;
 }
 
 
-void put_stuff(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
+void put_data(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char *namestr = new char[name_set[i].length() + 1];
 	char *valuestr = new char[value_set[i].length() + 1];
@@ -148,9 +277,29 @@ void put_stuff(ostream& fout, string* name_set, string* value_set, string* name_
 	strcpy(valuestr2, value_read[i].c_str());
 	
 	// Display output to fout and screen
-	//		can't cout type string*, had to copy into char first.
+	//		can't cout type string*, had to copy into char first. ...may want to 'normalize' or standardize IO for this function to get more use out of it
 	fout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
-	cout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
+	//cout << i << " (" << namestr << ",  " << valuestr << ",  " << namestr2 << ",  " << valuestr2 << ")\n";
+	delete [] namestr;
+	delete [] valuestr;
+	delete [] namestr2;
+	delete [] valuestr2;
+}
+
+void put_data(ostream& fout, string* name_old, string* name_new, int i)
+{
+	char *oldstr = new char[name_old[i].length() + 1];
+	char *newstr = new char[name_new[i].length() + 1];
+	
+	strcpy(oldstr, name_old[i].c_str());
+	strcpy(newstr, name_new[i].c_str());
+	
+	// Display output to fout and screen
+	//		can't cout type string*, had to copy into char first. ...may want to 'normalize' or standardize IO for this function to get more use out of it
+	fout << i << " (" << oldstr << ",  " << newstr << ")\n";
+	//cout << i << " (" << oldstr << ",  " << newstr << ")\n";
+	delete [] oldstr;
+	delete [] newstr;
 }
 
 void fill_index( int index[])
@@ -168,6 +317,8 @@ char *request_filename(string prompt)
 	char * cstr = new char[prompt.length()+1];
 	strcpy(cstr,prompt.c_str());
 	cout << cstr << "\n";
+	delete [] cstr;
+	
 	cin >> filename;// Had to use memory allocation in dynamic array to return actual value
 	return filename;
 }
