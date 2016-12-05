@@ -15,6 +15,51 @@ Put values to
 
 //inpfile = request_filename("Enter Array to sort:\n"); assignment to char [40] allowed with strcpy...
 
+
+
+
+HAVE SAVESET DATA
+HAVE ALIASMAP DATA
+
+WANT TO CREATE OBJECTS WITH SET/RD NAMES, & VALUES.
+	THEN REPLACE OLD NAMES IF SEEN
+	AND PARSE NAME INTO MACROS
+	AND OUTPUT TRANSLATED NAMES
+
+parseSet.cpp(`140): error C2664: 'unsigned int std::basic_string<char,std::char_traits<char>,std::allocator<char>>::copy(_Elem *, unsigned int, unsigned int) const': cannot convert argument 1 from 'std::string' to 'char *'
+	with
+	[
+		_Elem=char
+	]
+
+apparently...
+I DO NOT RETURN a name_set value matching "REA_BTS23:PSD_D1155:I_CSET" when I inlcude the first part...
+
+1)
+char *setStr = new char[name_set[0].length() + 1];
+strcpy(setStr, name_set[0].c_str());
+cout << "\nj: " << 0 << "\tGets us " << setStr << "...";
+delete [] setStr;/**/
+
+2)
+string Str = ("REA_BTS23:PSD_D1155:I_CSET");
+	for (int j = 0; j < num[0]; ++j) {
+		if (Str.compare(name_set[j])==0) {
+			cout << "\nFound set at j equals " << j << endl;
+		} else if (Str.compare(name_read[j])==0) {
+			cout << "\nFound read at j equals " << j << endl;
+		} else if (j==num[0]-1) {
+			cout << "\nNOT FOUND\n";
+		}
+	}
+
+
+
+
+
+
+
+
 /*Can't switch 'char *'
 switch(inpfile) {
 		case "value_set":
@@ -23,6 +68,18 @@ switch(inpfile) {
 			bubblesort(value_read, index, MAX_LINES_PER_FILE);
 }*/
 //if (inpfile==)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 /* USE BUBBlE SORT AFTER PARSING D#### FROM TRANSLATED CHAR ARRAY

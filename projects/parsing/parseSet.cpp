@@ -90,6 +90,12 @@ int main()
 	fout.close();
 	
 	
+	/*char *setStr = new char[name_set[0].length() + 1];
+	strcpy(setStr, name_set[0].c_str());
+	cout << "\nj: " << 0 << "\tGets us " << setStr << "...";
+	delete [] setStr;*/
+	
+	
 	/*-----GET ALIASMAP DATA-----*/
 	ifstream finMap; //map file
 	finMap.open(mapfile);
@@ -121,8 +127,17 @@ int main()
 	}
 	foutMap.close();
 	
-	
-	
+	/*
+	string Str = ("REA_BTS23:PSD_D1155:I_CSET");
+	for (int j = 0; j < num[0]; ++j) {
+		if (Str.compare(name_set[j])==0) {
+			cout << "\nFound set at j equals " << j << endl;
+		} else if (Str.compare(name_read[j])==0) {
+			cout << "\nFound read at j equals " << j << endl;
+		} else if (j==num[0]-1) {
+			cout << "\nNOT FOUND\n";
+		}
+	}*/
 	
 	/*-----TRANSLATE SAVESET DATA-----*/
 	for (int j = 0; j < num[0]; ++j) {
@@ -132,7 +147,9 @@ int main()
 		strcpy(readStr, name_read[j].c_str());
 		cout << "\nj: " << j << "\tGets us " << setStr << "...";
 		
-		for (int i = 0; i < num[1]; ++i) {
+		
+		
+		for (int i = 0; i <= num[1]; ++i) {
 			char *oldStr = new char[name_old[i].length() + 1];
 			char *newStr = new char[name_new[i].length() + 1];
 			strcpy(oldStr, name_old[i].c_str());
@@ -148,8 +165,18 @@ int main()
 				name_read[j].replace(0,name_old[i].length(),name_new[i]);
 				cout << newStr << "!!\n";
 				done[1]=1;
-			} else if (done[0]+done[1]==1) {
+			} else if (done[0]+done[1]==2) {
 				i = num[1];
+				done[0]=0;
+				done[1]=0;
+			}
+			
+			if (done[0]+done[1]==0 && i==num[1]) {
+				cout << "\nNEITHER FOUND\n";
+			} else if (done[0]<1 && i==num[1]) {
+				cout << "\nSET NOT FOUND\n";
+			} else if (done[1]<1 && i==num[1]) {
+				cout << "\nREAD NOT FOUND\n";
 			}
 			delete [] oldStr;
 			delete [] newStr;
@@ -160,10 +187,14 @@ int main()
 	
 	/*-----PROBING FUNNY BUSINESS WITH TRANSLATION STARTING IN BTS30-----*/
 	/*
-	char setStr = {"REA_BTS23:PSD_D1155:I_CSET"};
+	string Str = ("REA_BTS23:PSD_D1155:I_CSET");
 	for (int j = 0; j < num[0]; ++j) {
-		if (setStr.compare(name_set[j])==0) {
-			cout << "Found it at j equals " << j << endl;
+		if (Str.compare(name_set[j])==0) {
+			cout << "\nFound set at j equals " << j << endl;
+		} else if (Str.compare(name_read[j])==0) {
+			cout << "\nFound read at j equals " << j << endl;
+		} else if (j==num[0]-1) {
+			cout << "\nNOT FOUND\n";
 		}
 	}
 	
