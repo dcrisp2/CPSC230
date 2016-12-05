@@ -24,6 +24,28 @@ const char* ROCS_DELIMITER = " ,#"; //added comma
 const char* MAP_DELIMITER = " ,";
 const char* NAME_DELIMITER = "_:";
 
+class device
+{
+	public:
+		device(string set, string setv, string read, string readv) {
+			set(set, setv, read, readv);
+		}
+		device() {}
+		void set(string set, string setv, string read, string readv) {
+			setStr = set;
+			setVal = setv;
+			readStr = read;
+			readVal = readv;
+		}
+		void parseMacros();
+		double get_newVal() {return miles_per_gallon*fuel_capacity;}
+		//double get_val();
+	private:
+		string setStr, setVal, readStr, readVal;
+		string SYS, SUBSYS, DEV, INST, SIG, DOM, SUFF;
+		double Val, newVal;
+};
+
 void get_data( istream& , string* , string* , string* , string* , int );
 void get_data( istream& , string* , string* , int );
 //void get_data( string* , int );
