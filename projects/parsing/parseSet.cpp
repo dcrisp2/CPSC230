@@ -19,11 +19,10 @@ using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
 const int MAX_LINES_PER_FILE = 500;
-const int MAX_LINES_IN_MAPFILE = 3500;
+const int MAX_LINES_IN_MAPFILE = 3600;
 const char* ROCS_DELIMITER = " ,#"; //added comma
 const char* MAP_DELIMITER = " ,";
 const char* NAME_DELIMITER = "_:";
-typedef string* StrArrayPtr;
 
 void get_data( istream& , string* , string* , string* , string* , int );
 void get_data( istream& , string* , string* , int );
@@ -33,6 +32,7 @@ void fill_index( int index[]); //Are we sure we actually need to be as specific 
 void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
 char *request_filename(string);
 //char request_filename(string);
+void translate_data(string* , string* , string* , string* , int num[]);
 
 int main()
 {
@@ -51,7 +51,7 @@ int main()
 	char reprintData[40] = {"reprintData"};
 	char reprintMap[40] = {"reprintMap"};
 	int num[] = {0, 0};
-	int done[] = {0, 0};
+	int done[] = {0, 0, 0};
 
 	//char sortOption;
 	int index[MAX_LINES_PER_FILE];
@@ -127,8 +127,8 @@ int main()
 	}
 	foutMap.close();
 	
-	/*
-	string Str = ("REA_BTS23:PSD_D1155:I_CSET");
+	
+	/*string Str = ("REA_BTS23:PSD_D1155:I_CSET");
 	for (int j = 0; j < num[0]; ++j) {
 		if (Str.compare(name_set[j])==0) {
 			cout << "\nFound set at j equals " << j << endl;
@@ -140,82 +140,19 @@ int main()
 	}*/
 	
 	/*-----TRANSLATE SAVESET DATA-----*/
-	for (int j = 0; j < num[0]; ++j) {
-		char *setStr = new char[name_set[j].length() + 1];
-		char *readStr = new char[name_read[j].length() + 1];
-		strcpy(setStr, name_set[j].c_str());
-		strcpy(readStr, name_read[j].c_str());
-		cout << "\nj: " << j << "\tGets us " << setStr << "...";
-		
-		
-		
-		for (int i = 0; i <= num[1]; ++i) {
-			char *oldStr = new char[name_old[i].length() + 1];
-			char *newStr = new char[name_new[i].length() + 1];
-			strcpy(oldStr, name_old[i].c_str());
-			strcpy(newStr, name_new[i].c_str());
-			
-			if (name_set[j].compare(name_old[i])==0&&done[0]==0) {
-				cout << "\nNow " << setStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
-				name_set[j].replace(0,name_old[i].length(),name_new[i]);
-				cout << newStr << "!!\n";
-				done[0]=1;
-			} else if (name_read[j].compare(name_old[i])==0 && done[1]==0) {
-				cout << "\nNow " << readStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
-				name_read[j].replace(0,name_old[i].length(),name_new[i]);
-				cout << newStr << "!!\n";
-				done[1]=1;
-			} else if (done[0]+done[1]==2) {
-				i = num[1];
-				done[0]=0;
-				done[1]=0;
-			}
-			
-			if (done[0]+done[1]==0 && i==num[1]) {
-				cout << "\nNEITHER FOUND\n";
-			} else if (done[0]<1 && i==num[1]) {
-				cout << "\nSET NOT FOUND\n";
-			} else if (done[1]<1 && i==num[1]) {
-				cout << "\nREAD NOT FOUND\n";
-			}
-			delete [] oldStr;
-			delete [] newStr;
-		}
-		delete [] setStr;
-	}
+	translate_data(name_old, name_new, name_set, name_read, num);
 	
 	
 	/*-----PROBING FUNNY BUSINESS WITH TRANSLATION STARTING IN BTS30-----*/
-	/*
-	string Str = ("REA_BTS23:PSD_D1155:I_CSET");
-	for (int j = 0; j < num[0]; ++j) {
-		if (Str.compare(name_set[j])==0) {
-			cout << "\nFound set at j equals " << j << endl;
-		} else if (Str.compare(name_read[j])==0) {
-			cout << "\nFound read at j equals " << j << endl;
-		} else if (j==num[0]-1) {
-			cout << "\nNOT FOUND\n";
-		}
-	}
+	fout.open("rereprintData");
+	if(!fout.good())
+		return 1;
 	
-	cout << "\nj: " << 0 << "\tGets us " << setStr << "...";
-		
-	for (int i = 0; i < num[1]; ++i) {
-		char *oldStr = new char[name_old[i].length() + 1];
-		char *newStr = new char[name_new[i].length() + 1];
-		strcpy(oldStr, name_old[i].c_str());
-		strcpy(newStr, name_new[i].c_str());
-			
-		if (setStr.compare(name_old[i])==0) {
-			cout << "\nNow " << setStr << " is equal to " << oldStr << " when (i,j) equal " << i << ".\nSo its translation is:\t";
-			//name_set[j].replace(0,name_new[i].length(),name_new[i]);
-			cout << newStr << "!!\n";
-			i = num[1];
-		}
-		delete [] oldStr;
-		delete [] newStr;
+	cout << "\nPRINTING SAVESET DATA TO 'reprintData'...\n";
+	for (int i = 0; i < num[0]; i++) {
+		put_data(fout, name_set, value_set, name_read, value_read, i);
 	}
-	*/
+	fout.close();
 	
 	
 	return 0;
@@ -353,6 +290,62 @@ char *request_filename(string prompt)
 	cin >> filename;// Had to use memory allocation in dynamic array to return actual value
 	return filename;
 }
+
+void translate_data(string* name_old, string* name_new, string* name_set, string* name_read, int num[])
+{
+	int done[] = {0, 0, 0};
+	for (int j = 0; j < num[0]; j++) {
+		char *setStr = new char[name_set[j].length() + 1];
+		char *readStr = new char[name_read[j].length() + 1];
+		strcpy(setStr, name_set[j].c_str());
+		strcpy(readStr, name_read[j].c_str());
+		cout << "\n(j = " << j << ")\n" << setStr << "\n" << readStr << "\n";
+		
+		done[0]=0;
+		done[1]=0;
+		done[2]=0;
+		for (int i = 0; i <= num[1]; ++i) {
+			char *oldStr = new char[name_old[i].length() + 1];
+			char *newStr = new char[name_new[i].length() + 1];
+			strcpy(oldStr, name_old[i].c_str());
+			strcpy(newStr, name_new[i].c_str());
+			
+			if (name_set[j].compare(name_old[i])==0&&done[0]==0) {
+				//cout << "\nNow " << setStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
+				name_set[j].replace(0,name_old[i].length(),name_new[i]);
+				//cout << "\t..found " << newStr << "\n";
+				done[0]=1;
+				done[2]=done[0]+done[1];
+			} else if (name_read[j].compare(name_old[i])==0 && done[1]==0) {
+				//cout << "\nNow " << readStr << " is equal to " << oldStr << " when (i,j) equal " << i << " and " << j << ".\nSo its translation is:\t";
+				name_read[j].replace(0,name_old[i].length(),name_new[i]);
+				//cout << "\t..found " << newStr << "\n";
+				done[1]=1;
+				done[2]=done[0]+done[1];
+			} else if (done[2]==2) {
+				i = num[1];
+				cout << "\nBOTH FOUND\n";
+			}
+			
+			if (done[2]==0 && i==num[1]) {
+				cout << "\nMISSING BOTH(j = " << j << "):";
+				cout << "\n" << setStr
+					<< "\n" << readStr << "\n";
+			} else if (done[0]==0 && done[2]==1 && i==num[1]) {
+				cout << "\nMISSING SET(j = " << j << "):\n" << setStr << "\n";
+			} else if (done[1]==0 && done[2]==1 && i==num[1]) {
+				cout << "\nMISSING READ(j = " << j << "):\n" << readStr << "\n";
+			} else {
+				//cout << "\nError?\n";
+			}
+			delete [] oldStr;
+			delete [] newStr;
+		}
+		delete [] setStr;
+	}
+}
+
+
 
 void bubblesort(string val[], int index[], int MAX_LINES_PER_FILE)
 {
