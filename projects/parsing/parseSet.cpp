@@ -27,22 +27,35 @@ const char* NAME_DELIMITER = "_:";
 class device
 {
 	public:
-		device(string set, string setv, string read, string readv) {
-			set(set, setv, read, readv);
+		device(string s, string sv, string rd, string rdv) {
+			set(s, sv, rd, rdv);
 		}
 		device() {}
-		void set(string set, string setv, string read, string readv) {
-			setStr = set;
-			setVal = setv;
-			readStr = read;
-			readVal = readv;
+		void set(string s, string sv, string rd, string rdv) {
+			setStr = strtochar(s);
+			setVal = strtochar(sv);
+			readStr = strtochar(rd);
+			readVal = strtochar(rdv);
+		}
+		char *strtochar(string str) {
+			char *ans = new char[str.length() + 1];
+			strcpy(ans, str.c_str());
+			return ans;
 		}
 		void parseMacros();
-		double get_newVal() {return miles_per_gallon*fuel_capacity;}
+		string get_sys() {return SYS;}
+		string get_sub() {return SUB;}
+		string get_dev() {return DEV;}
+		string get_inst() {return INST;}
+		string get_sig() {return SIG;}
+		string get_dom() {return DOM;}
+		string get_suf() {return SUFX;}
+		
+		//double get_newVal() {return newVal;}
 		//double get_val();
 	private:
-		string setStr, setVal, readStr, readVal;
-		string SYS, SUBSYS, DEV, INST, SIG, DOM, SUFF;
+		char* setStr, setVal, readStr, readVal;
+		string SYS, SUB, DEV, INST, SIG, DOM, SUFX;
 		double Val, newVal;
 };
 
@@ -179,10 +192,19 @@ int main()
 	
 	
 	/*-----PARSING NEWNAMES-----*/
-	for (int i = 0; i < num[0]; i++) {
-		
-	}
-	
+	/*for (int i = 0; i < num[0]; i++) {
+		names_set[i]
+	}*/
+	i = 0;
+	device DV_D1155(name_set[i], value_set[i], name_read[i], value_read[i]);
+	DV_D1155.parseMacros();
+	cout << "\nPARSING NEWNAMES:\n"
+		<< DV_D1155.get_sys() << "\t" 
+		<< DV_D1155.get_sub() << "\t"
+		<< DV_D1155.get_dev() << "\t"
+		<< DV_D1155.get_inst() << "\t"
+		<< DV_D1155.get_sig() << "\t"
+		<< DV_D1155.get_dom() << "\n";
 	
 
 	return 0;
@@ -263,7 +285,7 @@ void get_data(istream& fin, string* name_old, string* name_new, int i)
 	delete [] thing;
 }
 
-/*void get_data( string* name, int i)
+void device::parseMacros()
 {
 	//filling name class object's properties with parsed values.
 	char* thing = new char[MAX_CHARS_PER_LINE];
@@ -272,44 +294,45 @@ void get_data(istream& fin, string* name_old, string* name_new, int i)
 	
 	//getline(c-string, numchars )
 	//fin.getline(thing,MAX_CHARS_PER_LINE);
-	strcpy(thing,name[i]);
+	//thing.copy(setStr);
+	strcpy(thing, setStr.c_str());
 	
 	splitThing = strtok (thing,NAME_DELIMITER);
 	while (splitThing != NULL) {
 		switch(count) {
 			case 0:
 				//--SYSTEM--
-				name_set[i] = splitThing;
+				SYS = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 1:
 				//--SUBSYSTEM--
-				value_set[i]= splitThing;
+				SUB= splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 2:
 				//--DEVICE--
-				name_read[i] = splitThing;
+				DEV = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 3:
 				//--INSTANCE--
-				value_read[i] = splitThing;
+				INST = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 4:
 				//--SIGNAL--
-				value_read[i] = splitThing;
+				SIG = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 5:
 				//--DOMAIN--
-				value_read[i] = splitThing;
+				DOM = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 6:
 				//--SUFFIX--
-				value_read[i] = splitThing;
+				SUFX = splitThing;
 				splitThing = strtok (NULL, NAME_DELIMITER);
 		}
 		count++;
 	}
 	delete [] thing;
-}*/
+}
 
 
 void put_data(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
