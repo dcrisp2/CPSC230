@@ -26,6 +26,7 @@ const char* NAME_DELIMITER = "_:";
 
 void get_data( istream& , string* , string* , string* , string* , int );
 void get_data( istream& , string* , string* , int );
+//void get_data( string* , int );
 void put_data( ostream& , string* , string* , string* , string* , int );
 void put_data( ostream& , string* , string* , int );
 void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
@@ -51,7 +52,7 @@ int main()
 	char reprintData[40] = {"reprintData"};
 	char reprintMap[40] = {"reprintMap"};
 	int num[] = {0, 0};
-	int done[] = {0, 0, 0};
+	//int done[] = {0, 0, 0};
 
 	//char sortOption;
 	int index[MAX_LINES_PER_FILE];
@@ -169,11 +170,13 @@ int main()
 
 
 /*------------------------------------------------------------------------------
-Function definitions below...
+FUNCTION GET DATA:
+
 --------------------------------------------------------------------------------*/
 void get_data(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
-	char character;
+	//Get saveset data for channel names and their stored values, filling name_set, name_read, and value equivalents string arrays.
+	//char character;
 	char* thing = new char[MAX_CHARS_PER_LINE];
 	char * splitThing;
 	int count = 0;
@@ -211,8 +214,8 @@ void get_data(istream& fin, string* name_set, string* value_set, string* name_re
 
 void get_data(istream& fin, string* name_old, string* name_new, int i)
 {
-	//See first definition of get_stuff for notes
-	char character;
+	//Get name mapping data from aliasmap.txt, filling name_old and name_new string arrays.
+	//char character;
 	char* thing = new char[MAX_CHARS_PER_LINE];
 	char * splitThing;
 	int count = 0;
@@ -237,6 +240,54 @@ void get_data(istream& fin, string* name_old, string* name_new, int i)
 	}
 	delete [] thing;
 }
+
+/*void get_data( string* name, int i)
+{
+	//filling name class object's properties with parsed values.
+	char* thing = new char[MAX_CHARS_PER_LINE];
+	char * splitThing;
+	int count = 0;
+	
+	//getline(c-string, numchars )
+	//fin.getline(thing,MAX_CHARS_PER_LINE);
+	strcpy(thing,name[i]);
+	
+	splitThing = strtok (thing,NAME_DELIMITER);
+	while (splitThing != NULL) {
+		switch(count) {
+			case 0:
+				//--SYSTEM--
+				name_set[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 1:
+				//--SUBSYSTEM--
+				value_set[i]= splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 2:
+				//--DEVICE--
+				name_read[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 3:
+				//--INSTANCE--
+				value_read[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 4:
+				//--SIGNAL--
+				value_read[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 5:
+				//--DOMAIN--
+				value_read[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 6:
+				//--SUFFIX--
+				value_read[i] = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+		}
+		count++;
+	}
+	delete [] thing;
+}*/
 
 
 void put_data(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
