@@ -155,6 +155,13 @@ int main()
 	fout.close();
 	
 	
+	/*-----PARSING NEWNAMES-----*/
+	for (int i = 0; i < num[0]; i++) {
+		
+	}
+	
+	
+
 	return 0;
 }
 
