@@ -5,6 +5,9 @@
 Whats left to do....
 Create aliasmap array.
 Put values to 
+
+CS-Studio training...
+http://ics-web.sns.ornl.gov/kasemir/CSS/Training/
 */
 
 
@@ -87,6 +90,30 @@ mapVec.push_back(s);
 
 and later on, in a loop where I was getting saveset data... I was going to try this:
 //find(mapVec.old.begin(),mapVec.old.end(), name_set[i]);
+
+
+TRIED TO MAKE AN EXTRA CLASS TO HELP... IT DIDN'T
+class infomap
+{
+	private:
+		char *oldStr, *newStr;
+		char *SYS, *SUB, *DEV, *INST, *SIG, *DOM, *SUFX;
+	public:
+		infomap(string ostr, string nstr) {
+			set(ostr, nstr);
+		}
+		infomap() {}
+		void set(string ostr, string nstr) {
+			oldStr = strtochar(ostr);
+			newStr = strtochar(nstr);
+		}
+		char *strtochar(string str) {
+			char *ans = new char[str.length() + 1];
+			strcpy(ans, str.c_str());
+			return ans;
+		}
+		void parseMacros();
+};
 
 
 
