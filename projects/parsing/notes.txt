@@ -54,9 +54,39 @@ string Str = ("REA_BTS23:PSD_D1155:I_CSET");
 	}
 
 
+TRIED TO ADD VECTOR STRUCT:
+#include<vector>
+class S
+{
+	string oldStr;
+	string newStr;
+	public:
+		S(string ostr, string nstr) {
+			set(ostr, nstr);
+		}
+		S() {}
+		void set(string ostr, string nstr) {
+			oldStr = ostr;
+			newStr = nstr;
+		}
+		
+};
 
+vector<S> mapVec;
+	
+while (!finMap.eof()) {
+	get_data(finMap, name_old, name_new, i);
+	aliasmap[name_old[i]] = name_old[i];
+	S s(name_old[i], name_new[i]);
+	mapVec.push_back(s);
+	i++;
+}
+//Last position is 0:0, so Its easier to tell later on if std::find failed
+S s("0","0");
+mapVec.push_back(s);
 
-
+and later on, in a loop where I was getting saveset data... I was going to try this:
+//find(mapVec.old.begin(),mapVec.old.end(), name_set[i]);
 
 
 
@@ -67,19 +97,6 @@ switch(inpfile) {
 		case "value_read":
 			bubblesort(value_read, index, MAX_LINES_PER_FILE);
 }*/
-//if (inpfile==)
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 /* USE BUBBlE SORT AFTER PARSING D#### FROM TRANSLATED CHAR ARRAY

@@ -4,28 +4,35 @@
 /* Readin and writing data from a text file. */
 /* Works well for AllAlarmChannels.txt as input, but doens't handle saveset.txt header very well */
 /* Skip spaces. This would only work for spaces at beginning of line. strtok and delimiter below do a much better job.
-			Removed from get_stuff()
-	while(fin.peek()== ' '){ //skip spaces
-		fin.get(character);
-		cout << "\nFOUND SPACE: '" << character << "'\n";
+
+
 }*/
 #include<iostream>
 #include<fstream>
 #include<cstring>
 #include<cstdlib>
 #include<cmath>
+#include<vector>
+#include<map>
 
 using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
 const int MAX_LINES_PER_FILE = 500;
 const int MAX_LINES_IN_MAPFILE = 3600;
-const char* ROCS_DELIMITER = " ,#"; //added comma
+const char* ROCS_DELIMITER = " ,#";
 const char* MAP_DELIMITER = " ,";
 const char* NAME_DELIMITER = "_:";
 
+
 class device
 {
+	private:
+		char *setStr, *setVal, *readStr, *readVal;
+		char *SYS, *SUB, *DEV, *INST, *SIG, *DOM, *SUFX;
+		char *DNUM;
+		double Val, newVal;
+	
 	public:
 		device(string s, string sv, string rd, string rdv) {
 			set(s, sv, rd, rdv);
@@ -43,33 +50,56 @@ class device
 			return ans;
 		}
 		void parseMacros();
-		string get_sys() {return SYS;}
-		string get_sub() {return SUB;}
-		string get_dev() {return DEV;}
-		string get_inst() {return INST;}
-		string get_sig() {return SIG;}
-		string get_dom() {return DOM;}
-		string get_suf() {return SUFX;}
+		void outputMacros() {
+			cout << "\nPARSING NEWNAMES:\n"
+				<< get_sys() << "\t" 
+				<< get_sub() << "\t"
+				<< get_dev() << "\t"
+				<< get_inst() << "\t"
+				<< get_sig() << "\t"
+				<< get_dom() << "\n"
+				<< get_sufx() << "\n";
+		}
+		//changed string to char
+		void set_dnum() {
+			const char *s = INST;
+			string str(s);
+			string str1;
+			str1 = str.substr(1, str.length() - 1);
+			DNUM = strtochar(str1);
+		}
+		
+		char *get_sys() {return SYS;}
+		char *get_sub() {return SUB;}
+		char *get_dev() {return DEV;}
+		char *get_inst() {return INST;}
+		char *get_sig() {return SIG;}
+		char *get_dom() {return DOM;}
+		char *get_sufx() {return SUFX;}
+		char *get_dnum() {return DNUM;}
+		
+		char *get_setStr() {return setStr;}
+		char *get_setVal() {return setVal;}
+		char *get_readStr() {return readStr;}
+		char *get_readVal() {return readVal;}
 		
 		//double get_newVal() {return newVal;}
-		//double get_val();
-	private:
-		char* setStr, setVal, readStr, readVal;
-		string SYS, SUB, DEV, INST, SIG, DOM, SUFX;
-		double Val, newVal;
 };
 
 void get_data( istream& , string* , string* , string* , string* , int );
 void get_data( istream& , string* , string* , int );
-//void get_data( string* , int );
 void put_data( ostream& , string* , string* , string* , string* , int );
 void put_data( ostream& , string* , string* , int );
-void fill_index( int index[]); //Are we sure we actually need to be as specific as to say 'index[]'?
 void bubblesort( string val[], int index[], int MAX_LINES_PER_FILE);
 char *request_filename(string);
-//char request_filename(string);
 void translate_data(string* , string* , string* , string* , int num[]);
+string translate_data(map<string, string>& aliasmap, string str);
 
+
+/*################################################################################
+	DRIVER FUNCTION:
+	
+################################################################################*/
 int main()
 {
 	system("cls");
@@ -80,70 +110,30 @@ int main()
 	string value_read[MAX_LINES_PER_FILE] = {""};
 	string name_old[MAX_LINES_IN_MAPFILE] = {""};
 	string name_new[MAX_LINES_IN_MAPFILE] = {""};
-
+	
+	map <string, string> aliasmap; //made in get_data loop for alias map, used to translate during get_data loop for saveset data
+	vector <device> data;
+	
 	char inpfile[40] = {""};
-	char outfile[40] = {""};
 	char mapfile[40] = {"aliasmap.csv"};
 	char reprintData[40] = {"reprintData"};
 	char reprintMap[40] = {"reprintMap"};
-	int num[] = {0, 0};
-	//int done[] = {0, 0, 0};
-
-	//char sortOption;
-	int index[MAX_LINES_PER_FILE];
-	fill_index(index);
-	
-	// Request Saveset Filename From User
-	strcpy(inpfile,request_filename("Enter saveset filename:\n"));
-	
-	/*-----GET SAVESET DATA-----*/
-	ifstream fin;
-	fin.open(inpfile);
-	if (!fin.good())
-		return 1;
-	
-	cout << "\nGETTING INPUT...\n";
+	int num[] = {0, 0}; //num[0] for saveset data, num[1] for aliasmap
 	int i = 0;
-	while (!fin.eof()) {
-		get_data(fin, name_set, value_set, name_read, value_read, i);
-		i++;
-	}
-	num[0] = i-1; //for input arrays
-	cout << "\tExiting save file. Non-null data of length " << num[0] << "\n";
-	fin.close();
 	
-	
-	/*-----PRINT SAVESET DATA-----*/
-	ofstream fout;
-	fout.open(reprintData);
-	if(!fout.good())
-		return 1;
-	
-	cout << "\nPRINTING SAVESET DATA TO 'reprintData'...\n";
-	for (int i = 0; i < num[0]; i++) {
-		put_data(fout, name_set, value_set, name_read, value_read, i);
-	}
-	fout.close();
-	
-	
-	/*char *setStr = new char[name_set[0].length() + 1];
-	strcpy(setStr, name_set[0].c_str());
-	cout << "\nj: " << 0 << "\tGets us " << setStr << "...";
-	delete [] setStr;*/
-	
-	
-	/*-----GET ALIASMAP DATA-----*/
-	ifstream finMap; //map file
+
+	/*-----------------------
+		GET ALIASMAP DATA
+	-----------------------*/
+	ifstream finMap;
 	finMap.open(mapfile);
 	if (!finMap.good())
 		return 1;
 	
 	cout << "\nGETTING ALIASMAP...\n";
-	i = 0;
 	while (!finMap.eof()) {
 			get_data(finMap, name_old, name_new, i);
-			
-			
+			aliasmap[name_old[i]] = name_new[i]; //So a query using old name, retrieves a new one!
 			i++;
 	}
 	num[1] = i-1; //re-used for aliasmap data
@@ -164,23 +154,31 @@ int main()
 	foutMap.close();
 	
 	
-	/*string Str = ("REA_BTS23:PSD_D1155:I_CSET");
-	for (int j = 0; j < num[0]; ++j) {
-		if (Str.compare(name_set[j])==0) {
-			cout << "\nFound set at j equals " << j << endl;
-		} else if (Str.compare(name_read[j])==0) {
-			cout << "\nFound read at j equals " << j << endl;
-		} else if (j==num[0]-1) {
-			cout << "\nNOT FOUND\n";
-		}
-	}*/
+	/*-------------------------------------
+		GET SAVESET DATA & TRANSLATE IT
+	-------------------------------------*/
+	strcpy(inpfile,request_filename("\nEnter saveset filename:"));
 	
-	/*-----TRANSLATE SAVESET DATA-----*/
-	translate_data(name_old, name_new, name_set, name_read, num);
+	ifstream fin;
+	fin.open(inpfile);
+	if (!fin.good())
+		return 1;
 	
+	cout << "\nGETTING INPUT...\n";
+	i = 0;
+	while (!fin.eof()) {
+		get_data(fin, name_set, value_set, name_read, value_read, i);
+		name_set[i] = translate_data( aliasmap, name_set[i]);
+		name_read[i] = translate_data( aliasmap, name_read[i]);
+		i++;
+	}
+	num[0] = i-1; //for input arrays
+	cout << "\tExiting save file. Non-null data of length " << num[0] << "\n";
+	fin.close();
 	
-	/*-----PROBING FUNNY BUSINESS WITH TRANSLATION STARTING IN BTS30-----*/
-	fout.open("rereprintData");
+	/*-----PRINT SAVESET DATA-----*/
+	ofstream fout;
+	fout.open(reprintData);
 	if(!fout.good())
 		return 1;
 	
@@ -192,31 +190,32 @@ int main()
 	
 	
 	/*-----PARSING NEWNAMES-----*/
-	/*for (int i = 0; i < num[0]; i++) {
-		names_set[i]
-	}*/
-	i = 0;
-	device DV_D1155(name_set[i], value_set[i], name_read[i], value_read[i]);
-	DV_D1155.parseMacros();
-	cout << "\nPARSING NEWNAMES:\n"
-		<< DV_D1155.get_sys() << "\t" 
-		<< DV_D1155.get_sub() << "\t"
-		<< DV_D1155.get_dev() << "\t"
-		<< DV_D1155.get_inst() << "\t"
-		<< DV_D1155.get_sig() << "\t"
-		<< DV_D1155.get_dom() << "\n";
+	//loop through saveset data
+	for (int k = 0; k < num[0]; k++) {
+		device d(name_set[k], value_set[k], name_read[k], value_read[k]);
+		d.parseMacros();
+		d.outputMacros();
+		data.push_back(d);
+		/*cout << "\nnum[0] = " << num[0]
+			<< "\tk = " << k
+			<< "\nd.get_inst() = " << d.get_inst().c_str()
+			<< "\tdata[k].get_inst() = " << data[k].get_inst().c_str() << "\n";*/
+	}
+	
+	data[0].set_dnum();
+	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";
 	
 
 	return 0;
 }
 
 
-
-
-/*------------------------------------------------------------------------------
-FUNCTION GET DATA:
-
---------------------------------------------------------------------------------*/
+/*################################################################################
+	FUNCTION DEFINITIONS:
+	
+==================================================================================
+	GETTING DATA:
+==================================================================================*/
 void get_data(istream& fin, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	//Get saveset data for channel names and their stored values, filling name_set, name_read, and value equivalents string arrays.
@@ -285,56 +284,10 @@ void get_data(istream& fin, string* name_old, string* name_new, int i)
 	delete [] thing;
 }
 
-void device::parseMacros()
-{
-	//filling name class object's properties with parsed values.
-	char* thing = new char[MAX_CHARS_PER_LINE];
-	char * splitThing;
-	int count = 0;
-	
-	//getline(c-string, numchars )
-	//fin.getline(thing,MAX_CHARS_PER_LINE);
-	//thing.copy(setStr);
-	strcpy(thing, setStr.c_str());
-	
-	splitThing = strtok (thing,NAME_DELIMITER);
-	while (splitThing != NULL) {
-		switch(count) {
-			case 0:
-				//--SYSTEM--
-				SYS = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 1:
-				//--SUBSYSTEM--
-				SUB= splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 2:
-				//--DEVICE--
-				DEV = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 3:
-				//--INSTANCE--
-				INST = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 4:
-				//--SIGNAL--
-				SIG = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 5:
-				//--DOMAIN--
-				DOM = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-			case 6:
-				//--SUFFIX--
-				SUFX = splitThing;
-				splitThing = strtok (NULL, NAME_DELIMITER);
-		}
-		count++;
-	}
-	delete [] thing;
-}
 
-
+/*================================================================================
+	OUTPUTTING DATA:
+================================================================================*/
 void put_data(ostream& fout, string* name_set, string* value_set, string* name_read, string* value_read, int i)
 {
 	char *namestr = new char[name_set[i].length() + 1];
@@ -373,13 +326,10 @@ void put_data(ostream& fout, string* name_old, string* name_new, int i)
 	delete [] newstr;
 }
 
-void fill_index( int index[])
-{
-	for (int i=0; i<MAX_LINES_PER_FILE; ++i) {	
-		index[i] += 1;
-	}
-}
 
+/*================================================================================
+	FILE IO:
+================================================================================*/
 char *request_filename(string prompt)
 //char request_filename(string prompt)
 {
@@ -394,6 +344,64 @@ char *request_filename(string prompt)
 	return filename;
 }
 
+
+/*================================================================================
+	DATA PROCESSING:
+================================================================================*/
+void device::parseMacros()
+{
+	//filling name class object's properties with parsed values.
+	char* thing = new char[MAX_CHARS_PER_LINE];
+	char * splitThing;
+	int count = 0;
+	
+	//getline(c-string, numchars )
+	//fin.getline(thing,MAX_CHARS_PER_LINE);
+	//thing.copy(setStr);
+	strcpy(thing, setStr);
+	
+	splitThing = strtok (thing,NAME_DELIMITER);
+	while (splitThing != NULL) {
+		switch(count) {
+			case 0:
+				//--SYSTEM--
+				SYS = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 1:
+				//--SUBSYSTEM--
+				SUB = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 2:
+				//--DEVICE--
+				DEV = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 3:
+				//--INSTANCE--
+				INST = splitThing;
+				/*for (char *ptr = INST; *ptr != '\0'; ptr++) {
+					*ptr = *(ptr+1);
+					*ptr = '\0';
+				}
+				DNUM = INST; DNUM = (INST+1);*/
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 4:
+				//--SIGNAL--
+				SIG = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 5:
+				//--DOMAIN--
+				DOM = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+			case 6:
+				//--SUFFIX--
+				SUFX = splitThing;
+				splitThing = strtok (NULL, NAME_DELIMITER);
+		}
+		count++;
+	}
+	delete [] thing;
+}
+
 void translate_data(string* name_old, string* name_new, string* name_set, string* name_read, int num[])
 {
 	int done[] = {0, 0, 0};
@@ -402,7 +410,7 @@ void translate_data(string* name_old, string* name_new, string* name_set, string
 		char *readStr = new char[name_read[j].length() + 1];
 		strcpy(setStr, name_set[j].c_str());
 		strcpy(readStr, name_read[j].c_str());
-		cout << "\n(j = " << j << ")\n" << setStr << "\n" << readStr << "\n";
+		//cout << "\n(j = " << j << ")\n" << setStr << "\n" << readStr << "\n";
 		
 		done[0]=0;
 		done[1]=0;
@@ -427,17 +435,17 @@ void translate_data(string* name_old, string* name_new, string* name_set, string
 				done[2]=done[0]+done[1];
 			} else if (done[2]==2) {
 				i = num[1];
-				cout << "\nBOTH FOUND\n";
+				cout << "\nBOTH FOUND (j = " << j << ")\n";
 			}
 			
 			if (done[2]==0 && i==num[1]) {
-				cout << "\nMISSING BOTH(j = " << j << "):";
+				cout << "\nMISSING BOTH (j = " << j << "):";
 				cout << "\n" << setStr
 					<< "\n" << readStr << "\n";
 			} else if (done[0]==0 && done[2]==1 && i==num[1]) {
-				cout << "\nMISSING SET(j = " << j << "):\n" << setStr << "\n";
+				cout << "\nMISSING SET (j = " << j << "):\n" << setStr << "\n";
 			} else if (done[1]==0 && done[2]==1 && i==num[1]) {
-				cout << "\nMISSING READ(j = " << j << "):\n" << readStr << "\n";
+				cout << "\nMISSING READ (j = " << j << "):\n" << readStr << "\n";
 			} else {
 				//cout << "\nError?\n";
 			}
@@ -448,7 +456,14 @@ void translate_data(string* name_old, string* name_new, string* name_set, string
 	}
 }
 
-
+string translate_data(map<string, string>& aliasmap, string str)
+{
+	//Passed a map of old->new names, and the search string. Either a new string, or the same one will be returned
+	if (aliasmap.find(str) != aliasmap.end()) {
+			str = aliasmap[str];
+	}
+	return str;
+}
 
 void bubblesort(string val[], int index[], int MAX_LINES_PER_FILE)
 {
