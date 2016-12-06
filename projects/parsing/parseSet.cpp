@@ -51,14 +51,15 @@ class device
 			return ans;
 		}
 		void parseMacros();
-		void outputMacros() {
-			cout << "\n\t{\""
-				<< get_sys() << "\",\t\"" 
-				<< get_sub() << "\",\t\"" 
-				<< get_dev() << "\",\t\"" 
-				<< get_inst() << "\",\t\"" 
-				<< get_sig() << "\",\t\"" 
-				<< get_dom() << "\",\t\"" 
+		//void outputMacros() {
+		void outputMacros(ostream& fout) {
+			fout << "\t\t{\""
+				<< get_sys() << "\", \"" 
+				<< get_sub() << "\", \"" 
+				<< get_dev() << "\", \"" 
+				<< get_inst() << "\", \"" 
+				<< get_sig() << "\", \"" 
+				<< get_dom() << "\", \"" 
 			<< get_sufx() << "\"}\n";
 		}
 		//memory access issues...
@@ -212,24 +213,28 @@ int main()
 	
 	
 	/*-----PARSING NEWNAMES-----*/
+	fout.open("usersub");
+	if (!fout.good())
+		return 1;
+	//cout << "\n\nMaking db file from objects:\n";
+	//fout << "file \"dummyPS.db\" {\n\tpattern { sys, subsys, dev, inst, sig, dom, set, rd }\n";
+	
 	//loop through saveset data
 	for (int k = 0; k < num[0]; k++) {
 		device d(name_set[k], value_set[k], name_read[k], value_read[k]);
 		d.parseMacros();
-		//d.outputMacros();
+		//d.outputMacros(fout); //running this once inside the vector does NOT come up with good results... whatever the reason it's likely thats why I had so much trouble with data[0].set_dnum();
 		data.push_back(d);
 	}
+	//fout << "}";
+	fout.close();	
+	
 	cout << "HEY!" << endl;
 	/*data[0].set_dnum();
 	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";*/
-	
-	
-	fout.open("usersub");
-	if (!fout.good())
-		return 1;
-	cout << "\n\nMaking db file from objects:\n";
-	for (int k = 0; k<)
 
+	
+	
 	return 0;
 }
 
