@@ -52,16 +52,19 @@ class device
 		}
 		void parseMacros();
 		void outputMacros() {
-			cout << "\nPARSING NEWNAMES:\n"
-				<< get_sys() << "\t" 
-				<< get_sub() << "\t"
-				<< get_dev() << "\t"
-				<< get_inst() << "\t"
-				<< get_sig() << "\t"
-				<< get_dom() << "\t"
-				<< get_sufx() << "\n";
+			cout << "\n\t{\""
+				<< get_sys() << "\",\t\"" 
+				<< get_sub() << "\",\t\"" 
+				<< get_dev() << "\",\t\"" 
+				<< get_inst() << "\",\t\"" 
+				<< get_sig() << "\",\t\"" 
+				<< get_dom() << "\",\t\"" 
+			<< get_sufx() << "\"}\n";
 		}
-		//changed string to char
+		//memory access issues...
+		//Tried this... it sometimes works
+		//also tried strncpy(src, length, n) (or something like that)
+		//have not yet tried copy(), or successfully attempted stepping pointer through string/char copying memory values to DNUM
 		/*void set_dnum() {
 			char* thing = new char[5];
 			char * splitThing;
@@ -90,7 +93,7 @@ class device
 		char *get_dom() {return DOM;}
 		char *get_sufx() {
 			if (!SUFX) {
-				SUFX = "";
+				SUFX = "";//says it's deprecated in g++
 			}
 			return SUFX;
 			}
@@ -220,6 +223,12 @@ int main()
 	/*data[0].set_dnum();
 	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";*/
 	
+	
+	fout.open("usersub");
+	if (!fout.good())
+		return 1;
+	cout << "\n\nMaking db file from objects:\n";
+	for (int k = 0; k<)
 
 	return 0;
 }
