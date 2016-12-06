@@ -2,9 +2,10 @@
 //DATE:		27OCT2016
 //FILE:		parseSet.cpp
 /* Readin and writing data from a text file. */
-/* Works well for AllAlarmChannels.txt as input, but doens't handle saveset.txt header very well */
-/* Skip spaces. This would only work for spaces at beginning of line. strtok and delimiter below do a much better job.
-
+/* Readin mapping of old-new names, replace any stored names from first file with new ones*/
+/* Parse names to make way for new functionality
+ - output current beam settings.
+ - give user interface to change, then accept new beam settings
 
 }*/
 #include<iostream>
@@ -22,7 +23,7 @@ const int MAX_LINES_PER_FILE = 500;
 const int MAX_LINES_IN_MAPFILE = 3600;
 const char* ROCS_DELIMITER = " ,#";
 const char* MAP_DELIMITER = " ,";
-const char* NAME_DELIMITER = "_:";
+const char* NAME_DELIMITER = " _:";
 
 
 class device
@@ -57,17 +58,29 @@ class device
 				<< get_dev() << "\t"
 				<< get_inst() << "\t"
 				<< get_sig() << "\t"
-				<< get_dom() << "\n"
+				<< get_dom() << "\t"
 				<< get_sufx() << "\n";
 		}
 		//changed string to char
-		void set_dnum() {
-			const char *s = INST;
-			string str(s);
-			string str1;
-			str1 = str.substr(1, str.length() - 1);
-			DNUM = strtochar(str1);
-		}
+		/*void set_dnum() {
+			char* thing = new char[5];
+			char * splitThing;
+			strcpy(thing, INST);
+			splitThing = strtok (thing,"DN");
+			if (splitThing == NULL) {
+				splitThing = strtok (NULL, "DN");
+				DNUM = splitThing;
+				splitThing = strtok (NULL, "DN");
+				cout << "\ninside set_dnum, where splitThing == NULL.";
+			} else if (splitThing != NULL ) {
+				DNUM = splitThing;
+				cout << "\ninside set_dnum, where splitThing != NULL.";
+			}
+			if (!DNUM) {
+				DNUM = "";
+			}
+			delete [] thing;
+		}*/
 		
 		char *get_sys() {return SYS;}
 		char *get_sub() {return SUB;}
@@ -75,7 +88,12 @@ class device
 		char *get_inst() {return INST;}
 		char *get_sig() {return SIG;}
 		char *get_dom() {return DOM;}
-		char *get_sufx() {return SUFX;}
+		char *get_sufx() {
+			if (!SUFX) {
+				SUFX = "";
+			}
+			return SUFX;
+			}
 		char *get_dnum() {return DNUM;}
 		
 		char *get_setStr() {return setStr;}
@@ -113,6 +131,7 @@ int main()
 	
 	map <string, string> aliasmap; //made in get_data loop for alias map, used to translate during get_data loop for saveset data
 	vector <device> data;
+	data.reserve(MAX_LINES_PER_FILE);
 	
 	char inpfile[40] = {""};
 	char mapfile[40] = {"aliasmap.csv"};
@@ -194,16 +213,12 @@ int main()
 	for (int k = 0; k < num[0]; k++) {
 		device d(name_set[k], value_set[k], name_read[k], value_read[k]);
 		d.parseMacros();
-		d.outputMacros();
+		//d.outputMacros();
 		data.push_back(d);
-		/*cout << "\nnum[0] = " << num[0]
-			<< "\tk = " << k
-			<< "\nd.get_inst() = " << d.get_inst().c_str()
-			<< "\tdata[k].get_inst() = " << data[k].get_inst().c_str() << "\n";*/
 	}
-	
-	data[0].set_dnum();
-	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";
+	cout << "HEY!" << endl;
+	/*data[0].set_dnum();
+	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";*/
 	
 
 	return 0;
@@ -378,11 +393,6 @@ void device::parseMacros()
 			case 3:
 				//--INSTANCE--
 				INST = splitThing;
-				/*for (char *ptr = INST; *ptr != '\0'; ptr++) {
-					*ptr = *(ptr+1);
-					*ptr = '\0';
-				}
-				DNUM = INST; DNUM = (INST+1);*/
 				splitThing = strtok (NULL, NAME_DELIMITER);
 			case 4:
 				//--SIGNAL--
