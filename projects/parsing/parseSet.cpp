@@ -7,6 +7,16 @@
  - output current beam settings.
  - give user interface to change, then accept new beam settings
 
+IMPROVEMENTS:
+stop using char *...
+	char *buf = "test";
+	string s;
+	s = buf;
+ #include <cstring> //For C++
+ #include <string.h> //For C
+ 
+ 
+ 
 }*/
 #include<iostream>
 #include<fstream>

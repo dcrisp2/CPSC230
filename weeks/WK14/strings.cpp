@@ -29,7 +29,7 @@ int main()
 	if(!strcmp(s1,s2)) {
 		cout << "Samesies.\n";
 	} else {
-		cout << "NOT same.\n";
+		cout << "NOT SAME!\n";
 	}
 	
 	

@@ -130,3 +130,85 @@ switch(inpfile) {
 cout << "\n\nSORTING INPUT:\n\n";
 bubblesort(value_set[], index[], MAX_LINES_PER_FILE);
 */
+
+http://forum.codecall.net/topic/65824-how-to-convert-from-char-to-string/
+GETTING AWAY FROM USING 'char *':
+	You can simply use the (overloaded) assignment operator to assign a char * to a std::string. This will copy all the data over automatically.
+
+	If you're trying to copy from a std::string to a char *, the best way to do that is with strncpy(), but you have to get the char data from the string first!
+
+		size_t str_size_w_null_end = str->size() + 1;
+	
+		char *buffer = malloc(str_size_w_null_end);
+	  
+		strncpy(buffer, str->c_str(), str_size_w_null_end
+  
+OR... ELSE... TRY THIS
+
+	char *but = "test";
+	string s;
+	s = buf;
+
+	#include <cstring> //For C++
+	#include <string.h> //For C
+	
+	/* The second and third lines here, look a lot like.. 'std::string s(buf);'
+	
+NOTE NOT TO FORGET SIZE...
+	don't forget the size, if you don't specify the buf size in the constructor, you could read garbage:
+
+	std::string s(buf, buf_size);
+
+	I'd use this, i had problems reading input files in a game and that was the cause
+	
+IN RESPONSE TO PRINTING FILE PATHS..
+string temp_file;
+temp_file = my_dir;
+temp_file += string ("\\file.tmp");
+
+DrDogg offered this snippet which prints "FishSpasm"
+	#include <iostream>
+	#include <string>
+
+	using namespace std;
+
+	const char* a = "Fish";
+
+	int main()
+	{
+	   string b;
+	   b = a;
+	   b += string("Spam");
+	   cout << b;
+	}
+	
+A STANDARD CHAR POINTER. Gary Willoughby is trying to cast one to a string... 'in D' (I donno what 'D' is though)
+	// string to char*
+	char *x = cast(char*)("Hello World\0");
+
+	// char* to string?
+	string x = cast(string)x;
+	string x = cast(immutable(char)[])x;
+	
+	ONE ANSWER:
+	Use 'std.conv.to' to convert from 'char*' to 'string'. Use 'std.string.toStringZ' to go the other way.
+		import std.string;
+		import std.stdio;
+		import std.conv;
+
+		void main()
+		{
+			immutable(char)* x = "Hello World".toStringz();
+			auto s = to!string(x);
+			writeln(s);
+		}
+	
+	ANOTHER ANSWER:
+	If you know the exact length.. try this..
+	...Taco says that he things 'len' should be of type 'size_t'
+		immutable(char)* cptr = obj.SomeSource();
+		int len = obj.SomeLength();
+
+		string str = cptr[0..len];
+	
+	
