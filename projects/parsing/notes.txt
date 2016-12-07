@@ -211,4 +211,19 @@ A STANDARD CHAR POINTER. Gary Willoughby is trying to cast one to a string... 'i
 
 		string str = cptr[0..len];
 	
+LOOKING FOR A FUNCTION TO ASSIGN CHAR ARRAY TO A STRING:
+...continue looking at answers..
+it looks like there was some trouble in implimentation...
+http://www.programmersheaven.com/discussion/309708/converting-char-array-to-string-type
+	std::string str;
+	char array[] = "Hello World";
+	for(int i = 0; array[i] != 0; i++)
+	str += array[i];
 	
+	OR...
+		std::string str;
+		char array[] = "Hello World";
+
+		str = array;
+		
+		
