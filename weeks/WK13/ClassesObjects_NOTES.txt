@@ -1,0 +1,43 @@
+Classes and Objects
+
+An object is a variabble that has functions associated with it. These functions are called member functions. A class is a tzpe whose variables are objects. The objectäs class )that is, the tzpe of the object= determines which member function the object has.
+
+Appending to a file
+Output_Stream.open(File_Name, ios::app);
+Example
+ofstream outStream;
+outStream.open("important.txt", ios::app);
+
+formatting flags for setf (flags are toggled on/off)
+i.e. out_stream.setf(ios::showpoint);
+ios::fixed
+ios::scientific
+ios::showpointios::showpos
+ios::right
+ios::left
+
+iomanip for setw
+
+stream arguments must be call by reference (&)
+void make_neat(ifstream& messy_file, ofstream& neat_file, int number_after_decimalpoint, int field_width);
+meanwhile in main...
+	make_neat(fin,fout,5,12);
+
+get and put member functions of iostream
+gets and puts each character, including spaces, and eol
+getline grabs the remaining characters of the line
+to call in function declare ifstream/ofstream, but pass istream/ostream.
+default arguments
+eof member function (returns type bool)
+	fin.eof()
+Predefined character functions
+	#include<cctype>
+	toupper()
+	tolower()
+	isupper()
+	islower()
+	isalpha()
+	isdigit()
+	isspace()
+	
+	

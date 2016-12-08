@@ -21,7 +21,7 @@ int main()
 	system("cls");
 	
 	string inputfile("phonebook.db");
-	string input;
+	char input[50] = {""};
 	string names[MAX_LINES_PER_FILE] = {""};
 	string numbers[MAX_LINES_PER_FILE] = {""};
 	int num = 0;
@@ -48,7 +48,7 @@ int main()
 	
 	cout << "This is your phonebook.\n\nPlease enter a name of someone you'd like to contact:\n";
 	
-	cin.getline(input,MAX_CHARS_PER_LINE);
+	getline(cin,input);
 	
 	cout << "\n\n" << input << " can be contacted by using number " << numberMap[input];
 	
