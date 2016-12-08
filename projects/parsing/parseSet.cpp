@@ -158,90 +158,90 @@ int main()
 	/*-----------------------
 		GET ALIASMAP DATA
 	-----------------------*/
-	ifstream finMap;
-	finMap.open(mapfile);
-	if (!finMap.good())
-		return 1;
-	
-	cout << "\nGETTING ALIASMAP...\n";
-	while (!finMap.eof()) {
-			get_data(finMap, name_old, name_new, i);
-			aliasmap[name_old[i]] = name_new[i]; //So a query using old name, retrieves a new one!
-			i++;
-	}
-	num[1] = i-1; //re-used for aliasmap data
-	cout << "\tExiting aliasmap.csv. Non-null data of length " << num[1] << "\n";
-	finMap.close();
+		ifstream finMap;
+		finMap.open(mapfile);
+		if (!finMap.good())
+			return 1;
+		
+		cout << "\nGETTING ALIASMAP...\n";
+		while (!finMap.eof()) {
+				get_data(finMap, name_old, name_new, i);
+				aliasmap[name_old[i]] = name_new[i]; //So a query using old name, retrieves a new one!
+				i++;
+		}
+		num[1] = i-1; //re-used for aliasmap data
+		cout << "\tExiting aliasmap.csv. Non-null data of length " << num[1] << "\n";
+		finMap.close();
 	
 	
 	/*-----PRINT ALIASMAP DATA-----*/
-	ofstream foutMap;
-	foutMap.open(reprintMap);
-	if(!foutMap.good())
-		return 1;
-	
-	cout << "\nPRINTING ALIASMAP TO 'reprintMap'...\n";
-	for (int i = 0; i < num[1]; i++) {
-		put_data(foutMap, name_old, name_new, i);
-	}
-	foutMap.close();
+		ofstream foutMap;
+		foutMap.open(reprintMap);
+		if(!foutMap.good())
+			return 1;
+		
+		cout << "\nPRINTING ALIASMAP TO 'reprintMap'...\n";
+		for (int i = 0; i < num[1]; i++) {
+			put_data(foutMap, name_old, name_new, i);
+		}
+		foutMap.close();
 	
 	
 	/*-------------------------------------
 		GET SAVESET DATA & TRANSLATE IT
 	-------------------------------------*/
-	strcpy(inpfile,request_filename("\nEnter saveset filename:"));
-	
-	ifstream fin;
-	fin.open(inpfile);
-	if (!fin.good())
-		return 1;
-	
-	cout << "\nGETTING INPUT...\n";
-	i = 0;
-	while (!fin.eof()) {
-		get_data(fin, name_set, value_set, name_read, value_read, i);
-		name_set[i] = translate_data( aliasmap, name_set[i]);
-		name_read[i] = translate_data( aliasmap, name_read[i]);
-		i++;
-	}
-	num[0] = i-1; //for input arrays
-	cout << "\tExiting save file. Non-null data of length " << num[0] << "\n";
-	fin.close();
+		strcpy(inpfile,request_filename("\nEnter saveset filename:"));
+		
+		ifstream fin;
+		fin.open(inpfile);
+		if (!fin.good())
+			return 1;
+		
+		cout << "\nGETTING INPUT...\n";
+		i = 0;
+		while (!fin.eof()) {
+			get_data(fin, name_set, value_set, name_read, value_read, i);
+			name_set[i] = translate_data( aliasmap, name_set[i]);
+			name_read[i] = translate_data( aliasmap, name_read[i]);
+			i++;
+		}
+		num[0] = i-1; //for input arrays
+		cout << "\tExiting save file. Non-null data of length " << num[0] << "\n";
+		fin.close();
 	
 	/*-----PRINT SAVESET DATA-----*/
-	ofstream fout;
-	fout.open(reprintData);
-	if(!fout.good())
-		return 1;
-	
-	cout << "\nPRINTING SAVESET DATA TO 'reprintData'...\n";
-	for (int i = 0; i < num[0]; i++) {
-		put_data(fout, name_set, value_set, name_read, value_read, i);
-	}
-	fout.close();
+		ofstream fout;
+		fout.open(reprintData);
+		if(!fout.good())
+			return 1;
+		
+		cout << "\nPRINTING SAVESET DATA TO 'reprintData'...\n";
+		for (int i = 0; i < num[0]; i++) {
+			put_data(fout, name_set, value_set, name_read, value_read, i);
+		}
+		fout.close();
 	
 	
 	/*-----PARSING NEWNAMES-----*/
-	fout.open("usersub");
-	if (!fout.good())
-		return 1;
-	//cout << "\n\nMaking db file from objects:\n";
-	//fout << "file \"dummyPS.db\" {\n\tpattern { sys, subsys, dev, inst, sig, dom, set, rd }\n";
-	
-	//loop through saveset data
-	for (int k = 0; k < num[0]; k++) {
-		device d(name_set[k], value_set[k], name_read[k], value_read[k]);
-		d.parseMacros();
-		//d.outputMacros(fout); //running this once inside the vector does NOT come up with good results... whatever the reason it's likely thats why I had so much trouble with data[0].set_dnum();
-		data.push_back(d);
-	}
-	//fout << "}";
-	fout.close();	
-	
-	cout << "HEY!" << endl;
-	/*data[0].set_dnum();
-	cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";*/
+		fout.open("usersub");
+		if (!fout.good())
+			return 1;
+		//cout << "\n\nMaking db file from objects:\n";
+		//fout << "file \"dummyPS.db\" {\n\tpattern { sys, subsys, dev, inst, sig, dom, set, rd }\n";
+		
+		//loop through saveset data
+		for (int k = 0; k < num[0]; k++) {
+			device d(name_set[k], value_set[k], name_read[k], value_read[k]);
+			d.parseMacros();
+			//d.outputMacros(fout); //running this once inside the vector does NOT come up with good results... whatever the reason it's likely thats why I had so much trouble with data[0].set_dnum();
+			data.push_back(d);
+		}
+		//fout << "}";
+		fout.close();	
+		
+		cout << "HEY!" << endl;
+		/*data[0].set_dnum();
+		cout << "\nFor data[0].set_dnum, DNUM = " << data[0].get_dnum() << "\n";*/
 
 	
 	
