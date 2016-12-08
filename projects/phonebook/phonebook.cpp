@@ -3,7 +3,7 @@
 //DESC:			phonebook.cpp
 
 #include<cstdlib>
-#include<cstring>
+#include<string>
 #include<map>
 #include<fstream>
 #include<iostream>
@@ -21,7 +21,8 @@ int main()
 	system("cls");
 	
 	string inputfile("phonebook.db");
-	char input[50] = {""};
+	char * name = (char*) malloc (41);
+	string ans;
 	string names[MAX_LINES_PER_FILE] = {""};
 	string numbers[MAX_LINES_PER_FILE] = {""};
 	int num = 0;
@@ -46,12 +47,19 @@ int main()
 	cout << "\tExiting phonebook.db. Non-null data of length " << num << "\n";
 	fin.close();
 	
-	cout << "This is your phonebook.\n\nPlease enter a name of someone you'd like to contact:\n";
+	cout << "This is your phonebook.\n\n";
 	
-	getline(cin,input);
+	do {
+	cout << "Please enter a name of someone you'd like to contact:\n";
 	
-	cout << "\n\n" << input << " can be contacted by using number " << numberMap[input];
+	char * name = (char*) malloc (41);
+	cin >> name;
 	
+	cout << "\n\n" << name << " can be contacted by using number " << numberMap[name] << "\n\n";
+	
+	cout << "Do you want to continue? Enter either 'N' or 'n' to stop.\n";
+	cin >> ans;
+	} while (ans != "N/0" || ans != "n/0" );
 	
 	
 	return 0;
