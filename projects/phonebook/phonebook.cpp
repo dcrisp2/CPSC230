@@ -22,13 +22,13 @@ int main()
 	
 	string inputfile("phonebook.db");
 	char * name = (char*) malloc (41);
-	string ans;
+	char ans;
 	string names[MAX_LINES_PER_FILE] = {""};
 	string numbers[MAX_LINES_PER_FILE] = {""};
 	int num = 0;
 	int i = 0;
 	
-	map <string, string> numberMap;
+	map <string, string> book;
 	ifstream fin;
 	
 	fin.open(inputfile);
@@ -40,27 +40,34 @@ int main()
 	cout << "\nGETTING ALIASMAP...\n";
 	while (!fin.eof()) {
 		get_data(fin, names, numbers, i);
-		numberMap[names[i]] = numbers[i]; //So a query using old name, retrieves a new one!
+		book[names[i]] = numbers[i]; //So a query using old name, retrieves a new one!
 		i++;
 	}
 	num = i-1; //re-used for aliasmap data
 	cout << "\tExiting phonebook.db. Non-null data of length " << num << "\n";
 	fin.close();
 	
-	cout << "This is your phonebook.\n\n";
+	cout << "========================================";
+	cout << "\nThis is your phonebook.\n\n";
+	cout << "========================================";
 	
 	do {
-	cout << "Please enter a name of someone you'd like to contact:\n";
+	cout << "\n\nPlease enter a name of someone you'd like to contact:\n";
 	
 	char * name = (char*) malloc (41);
 	cin >> name;
 	
-	cout << "\n\n" << name << " can be contacted by using number " << numberMap[name] << "\n\n";
-	
-	cout << "Do you want to continue? Enter either 'N' or 'n' to stop.\n";
+	if(book.find(name) != book.end()) {
+		cout << "\n\n" << name << " can be contacted by using number " << book[name] << "\n\n";
+	} else {
+		cout << "\n\nYour phonebook does not have " << name << " in it.\n\n";
+	}
+	cout << "\nDo you want to continue? Enter either 'Y' or 'y' to continue.\n";
 	cin >> ans;
-	} while (ans != "N/0" || ans != "n/0" );
+	cout << "\n-----------------------------------------";
+	} while ((ans == 'y') || (ans == 'Y'));
 	
+	cout << "\n\ngoodbye...\n";
 	
 	return 0;
 }
