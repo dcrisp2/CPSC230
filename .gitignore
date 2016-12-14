@@ -1,0 +1,4 @@
+# Files to ignore
+# Any windows 'swap' or thumbs.db files
+*~$*
+*thumbs.db
