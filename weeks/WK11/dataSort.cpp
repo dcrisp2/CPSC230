@@ -13,7 +13,7 @@ using namespace std;
 
 // Including this as reference to sorting tool whether I use it or not.
 void bubblesort(int arr[], int MAX_LINES_PER_FILE);
-const int MAX_LINES_PER_FILE = 10;
+const int MAX_LINES_PER_FILE = 100;
 const int MAX_CHARS_PER_LINE = 100;
 
 int main ()
@@ -55,7 +55,7 @@ int main ()
 	fin.close();
 	
 	
-	cout << "\n\nSORTING INPUT:\n\n";
+	cout << "\n\nSORTING INPUT...\n\n";
 	bubblesort(arr, MAX_LINES_PER_FILE);
 	
 	cout << "DISPLAY SORTED ARRAY:\n";
