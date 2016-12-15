@@ -6,15 +6,6 @@
 /* Parse names to make way for new functionality
  - output current beam settings.
  - give user interface to change, then accept new beam settings
-
-IMPROVEMENTS:
-stop using char *...
-	char *buf = "test";
-	string s;
-	s = buf;
- #include <cstring> //For C++
- #include <string.h> //For C
- 
  
  
 }*/
@@ -29,7 +20,7 @@ stop using char *...
 using namespace std;
 
 const int MAX_CHARS_PER_LINE = 100;
-const int MAX_LINES_PER_FILE = 500;
+const int MAX_LINES_PER_FILE = 600;
 const int MAX_LINES_IN_MAPFILE = 3600;
 const char* ROCS_DELIMITER = " ,#";
 const char* MAP_DELIMITER = " ,";
