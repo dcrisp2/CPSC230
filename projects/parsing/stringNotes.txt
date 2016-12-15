@@ -1,0 +1,86 @@
+C-String
+Declaration
+syntax
+	char Array_Name[Maximum_C_string_Size + 1];
+example
+	char my_c_string[11];
+		for null char '\0'
+ 
+Initializing
+char your_string[11] = "Do Be Do";
+	Initializing in this way automatically places the null char '\0' in the array at end of C string specified
+char my_string[]= "Do Be Do";
+	Omitting the number inside the brackets, the C-string variable is given a size one character longer than the length of the C string. This one would have 9 indexed and one null char.
+
+strcpy (string target, string src)
+strncpy (string target, string src, Limit)
+strcat (string target, string src)
+strncat (string target, string src, Limit)
+strlen (string src)
+strcmp (string one, string two)
+strncmp (string one, string two, Limit)
+
+C-String Arguments and Parameters
+A C-string variable is an array, so a C-string parameter to a function is simply an array parameter.
+As with any array parameter, whenever a function changes the value of a C-string parameter, it is safest to include an aadditional int parameter giving the declared size of the C-string variable.
+on the other hand if a function only uses the value in a C-string argument but does not change that value, then there is no need to include another parameter to give either the declared size of the C-string variable or the amount of the C-string variable array that is filled. The null character '\0' can be used to detect the end of the C-string value that is stored in the C-string variable.
+
+Using input operator >> will only input characters up to a space. Need to use cin.getline(str, 80);
+
+getline
+syntax
+cin.getline(string, maxcharacters + 1)
+
+C-string to number
+	will need #include <cstdlib>
+int x = atoi("657");
+	sets value of x to 657
+
+double y = atof("12.37");
+	sets the value of y to 12.37
+	
+stanndard string class
+string class defined in <string>
+can assign using =, catenate with +
+getline for objects of the class stringThe getline function for string objects has two versions:
+ istream& getline(istream& ins, string& str_var, char delimeter);
+and,
+ istream& getline(istream& ins, string& str_var);
+The first verrsion of this function reads characters from the istream object given as the first argument (always cin in this chapter), inserting the characters into the string variable str_var until an instance of the delimiter character is encountered. The delimiter charater is removed from the input and discarded. The second version uses '\n' for the default value of delimiter; otherwise, it works the same.
+These getline functinos return their first argument (always cin in this chapter), but they are usually used as if they were void functions.
+
+Example									Remarks
+Constructors
+string str;								Default constructor creates empty string object str.
+string str("sample");					Creates a string object with data "sample".
+string str (a_string);					Creates a string object str that is a copy of a_string; a_string is an object of the class string.
+
+Accessors
+str[i];									Returns read/write reference to character in str at index i. Does not check for illegal index.
+str.at(i);								Returns read/write reference to character in str at index i. Same as str[i], but this version checks for illegal index.
+str.substr(position, length);			Returns the substring of the calling object starting at position and having length characters.
+str.length();							Returns the length of str.
+
+Assignment/Modifiers
+str1 = str2;							Initializes str1 to str2's data.
+str1 += str2;							Character data of str2 is concatenated to the end of str1.
+str.empty();							Returns true if str is an empty string; false otherwise.
+str1 + str2								Returns a string that has str2's data concatenated to the end of str1's data.
+str.insert(pos, str2);					Inserts str2 into str beginning at position pos.
+str.erase(pos, length);					Removes substring of size length, strarting at position pos.
+
+Comparison
+str1 == str2	str1 != str2			Compare for equality or inequality; returns a Boolean value.
+str1 < str2		str1 > str2				Four comparisons. All are lexicographical comparisons.
+str1 <= str2	str1 >= str2
+
+
+Finds
+str.find(str1);							Returns index of the first occurrence of str1 in str. if str1 is not found, then the specialvalue string::npos is returned.
+str.find(str1, pos);					Rreturns index of the first occurence of string str1 in str; the search starts at position pos.
+str.find_first_of(str1, pos);			Returns the index of the first instance in str of any character in str1, starting the search at position pos.
+str.find_first_not_of(str1, pos);		Returns the index of the first instance in str of any character not in str1, starting the search at position pos.
+
+Note: = and == are different for strings and C strings
+The operators =, ==, !-, <, >, <=, >=, when used with the standard C++ stype string, produce results that correspond to our intuitive notion of how strings compare. They do not misbehave as they do with the C strings, as we discussed in Section 8.1.
+
