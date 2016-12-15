@@ -84,3 +84,12 @@ str.find_first_not_of(str1, pos);		Returns the index of the first instance in st
 Note: = and == are different for strings and C strings
 The operators =, ==, !-, <, >, <=, >=, when used with the standard C++ stype string, produce results that correspond to our intuitive notion of how strings compare. They do not misbehave as they do with the C strings, as we discussed in Section 8.1.
 
+Note: converting to double and int
+int i;
+double d;
+string s;
+i = stoi("35"); // Converts the string to an integer 35
+d = stod("2.5"); // COnverts the string "2.5" to the double 2.5
+s = to_string(d*2); // Converts the double 5.0 to a string "5.0000"
+cout << i << " " << d << " " << s << endl;
+The output is 35 2.5 5.0000
