@@ -1,0 +1,54 @@
+VECTORS
+	#include <vector>
+	using namespace std;
+
+Declaration
+vector<Base_Type> var;
+i.e. vector<int> i;
+indexed just like arrays
+i[k] = 42;
+cout << "the k'th index is " << i[k];
+
+
+
+Initializing
+to add an element to an index position of a vector for first time. must use pushback.
+i.push_back(newval);
+OR
+ vector <double> sample = {0.0, 1.1, 2.2};
+ 
+Efficiency
+capacity (v.capacity())of vector will automatically increase to twice the size (v.size()).
+Try to reserve (v.reserve()) first, to pre-allocate space. or something like v.reserve(v.size() +10)
+Also,can resize (v.resize()). If previous size was less than 24, new elements are initialized for the given constructor (i.e. vector <int>), but if previous size was greater than 24, all but the first 24 elements are lost. 
+
+POINTERS
+Addresses and Numbers
+A pointer is an address, and an address is an integer, but a pointer is not an integer. C++ insists that you use a pointer as an address and that you not use it as a number. A pointer is not a value of type int or aof any other numeric type. You normally cannot sotre a pointer in a variable of type int.
+
+The * and & Operators
+The *operator in front of a pointer variable produces the variable it points to. When used this way the *operator is called the dereferencing operator.
+The operator & in front of an ordinary variable produces the address of that variable; that is, produces a pointer that points to the variable. The & operator is called the address-of operator.
+For example, consider the declarations
+  double *p, v;
+The following sets the value of p so that p points to the variable v:
+  p = &v;
+*p produces the variable pointed to by p, so after the assignment above, *p and v refer to the same variable. For example, the following sets the value of v to 9.99, even though the name v is never explicitly used:
+  *p = 9.99
+
+Pointer Variables Used with =
+If p1 and p2 are pointer variables, then the statement
+  p1 = p2;
+changes p1 so that it points to the same thing that p2 is currently pointing to.
+
+The new Operator
+The new operator creates a new dynamic variable of specified type and returns a pointer that points to this new variable. For example, the following creates a new dynamic variable of type MyType and leaves the pointer variable p pointing to this new variable:
+  MyType *p;
+  p = new MyType;
+The C++ standard specifies that if there is not sufficient memory available to create the new variable, then the new operator, by default, terminates the program.
+
+The delete Operator
+The delete operator eliminates a dynamic variable and returns the memory that the dynamic variable occupied to the freestore. The memory can then be reused to create new dynamic variables. For example, the following eliminates the dynamic variable pointed to by the pointer variable:
+  delete p;
+After a call to delete, the value of the pointer variable, like p above, is undefined. (A slightly different version of delete, discussed later in this chapter, is used when the dynamic variable is an array.)
+
